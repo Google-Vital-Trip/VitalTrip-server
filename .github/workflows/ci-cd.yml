@@ -1,0 +1,123 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Run tests
+        run: ./gradlew test
+
+  deploy-develop:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build -x test
+
+      - name: Get JAR file name
+        id: jar
+        run: |
+          JAR_FILE=$(find build/libs -name "*.jar" -not -name "*-plain.jar" | head -1)
+          echo "jar_file=$JAR_FILE" >> $GITHUB_OUTPUT
+          echo "jar_name=$(basename $JAR_FILE)" >> $GITHUB_OUTPUT
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEVELOP_SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+      - name: Deploy to develop server
+        run: |
+          # JAR 파일 전송
+          scp -P ${{ secrets.DEVELOP_SSH_PORT }} -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ steps.jar.outputs.jar_file }} \
+            ${{ secrets.DEVELOP_SERVER_USER }}@${{ secrets.DEVELOP_SERVER_HOST }}:/home/${{ secrets.DEVELOP_SERVER_USER }}/app/
+          
+          # 애플리케이션 배포
+          ssh -p ${{ secrets.DEVELOP_SSH_PORT }} -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ secrets.DEVELOP_SERVER_USER }}@${{ secrets.DEVELOP_SERVER_HOST }} << 'EOF'
+          
+          cd /home/${{ secrets.DEVELOP_SERVER_USER }}/app
+          
+          # 기존 프로세스 종료
+          pkill -f 'java -jar' || true
+          sleep 5
+          
+          # 새 애플리케이션 실행
+          nohup java -jar ${{ steps.jar.outputs.jar_name }} > app.log 2>&1 &
+          
+          # 프로세스 확인
+          sleep 10
+          if pgrep -f 'java -jar' > /dev/null; then
+            echo "✅ Application deployed successfully to DEVELOP environment"
+            echo "🌐 Server: ${{ secrets.DEVELOP_SERVER_HOST }}:${{ secrets.DEVELOP_APP_PORT }}"
+          else
+            echo "❌ Application failed to start"
+            tail -20 app.log
+            exit 1
+          fi
+          EOF
+
+  deploy-production:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Production deployment placeholder
+        run: |
+          echo "🚧 Production deployment not configured yet"
+          echo "📦 Build artifact would be deployed to production server"
+          echo "🎯 Triggered by push to main branch"
