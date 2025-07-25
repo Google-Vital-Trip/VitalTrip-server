@@ -1,4 +1,4 @@
-package com.vitaltrip.vitaltrip.domain.auth.unit.util;
+package com.vitaltrip.vitaltrip.domain.auth.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
