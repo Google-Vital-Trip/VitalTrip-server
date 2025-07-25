@@ -20,9 +20,9 @@ public class JwtUtil {
     private final long refreshTokenExpiration;
 
     public JwtUtil(
-        @Value("${jwt.secret:mySecretKeyForJWTTokenGeneration123456789}") String secret,
-        @Value("${jwt.access-token-expiration:3600000}") long accessTokenExpiration, // 1시간
-        @Value("${jwt.refresh-token-expiration:604800000}") long refreshTokenExpiration // 7일
+        @Value("${jwt.secret}") String secret,
+        @Value("${jwt.access-token-expiration}") long accessTokenExpiration,
+        @Value("${jwt.refresh-token-expiration}") long refreshTokenExpiration
     ) {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
         this.accessTokenExpiration = accessTokenExpiration;
@@ -38,7 +38,7 @@ public class JwtUtil {
     }
 
     public String generateTempToken(User user) {
-        long tempTokenExpiration = 1800000;
+        long tempTokenExpiration = 1800000; // 30분
 
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + tempTokenExpiration);
@@ -47,6 +47,7 @@ public class JwtUtil {
             .subject(user.getId().toString())
             .claim("email", user.getEmail())
             .claim("name", user.getName())
+            .claim("phoneNumber", user.getPhoneNumber())
             .claim("temp", true)
             .claim("role", "TEMP_USER")
             .issuedAt(now)
@@ -64,6 +65,7 @@ public class JwtUtil {
             .claim("email", user.getEmail())
             .claim("name", user.getName())
             .claim("countryCode", user.getCountryCode())
+            .claim("phoneNumber", user.getPhoneNumber())
             .claim("role", user.getRole().name())
             .issuedAt(now)
             .expiration(expiryDate)
@@ -90,6 +92,10 @@ public class JwtUtil {
 
     public String getCountryCode(String token) {
         return getClaims(token).get("countryCode", String.class);
+    }
+
+    public String getPhoneNumber(String token) {
+        return getClaims(token).get("phoneNumber", String.class);
     }
 
     public boolean isTokenExpired(String token) {
@@ -120,5 +126,4 @@ public class JwtUtil {
             return false;
         }
     }
-
 }
