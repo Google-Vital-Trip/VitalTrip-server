@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -30,10 +29,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-        FilterChain filterChain)
-        throws ServletException, IOException {
+        FilterChain filterChain) throws ServletException, IOException {
 
-        log.info(request.getRequestURI());
+        String requestURI = request.getRequestURI();
 
         String token = getTokenFromRequest(request);
 
@@ -48,16 +46,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String userId = jwtUtil.getUserId(token);
-
-        User user = userRepository.findById(Long.parseLong(userId))
-            .orElse(null);
+        User user = userRepository.findById(Long.parseLong(userId)).orElse(null);
 
         if (user == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        setAuthentication(request, user);
+        if (jwtUtil.isTempToken(token)) {
+            if (isTempTokenAllowedPath(requestURI)) {
+                setTempAuthentication(request, user);
+            } else {
+                filterChain.doFilter(request, response);
+                return;
+            }
+        } else {
+            setAuthentication(request, user);
+        }
 
         filterChain.doFilter(request, response);
     }
@@ -72,18 +77,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 
+    private boolean isTempTokenAllowedPath(String requestURI) {
+        return requestURI.equals("/api/oauth2/complete-profile") ||
+            requestURI.equals("/api/oauth2/status");
+    }
+
     private void setAuthentication(HttpServletRequest request, User user) {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(
             "ROLE_" + user.getRole().name());
 
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-            user,
-            null,
-            Collections.singletonList(authority)
+            user, null, Collections.singletonList(authority)
         );
 
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
     }
 
+    private void setTempAuthentication(HttpServletRequest request, User user) {
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_TEMP_USER");
+
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+            user, null, Collections.singletonList(authority)
+        );
+
+        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+    }
 }

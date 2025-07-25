@@ -1,6 +1,7 @@
 package com.vitaltrip.vitaltrip.config;
 
 import com.vitaltrip.vitaltrip.domain.auth.filter.JwtAuthenticationFilter;
+import com.vitaltrip.vitaltrip.domain.auth.handler.SimpleOAuth2SuccessHandler;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +23,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final SimpleOAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -33,14 +35,24 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
+                    // 기본 인증 API
                     "/api/auth/signup",
                     "/api/auth/login",
                     "/api/auth/refresh",
+
+                    // OAuth2 관련
+                    "/oauth2/**",
+                    "/login/oauth2/**",
+
+                    // 개발/문서 관련
                     "/swagger-ui/**",
                     "/v3/api-docs/**",
                     "/h2-console/**"
                 ).permitAll()
                 .anyRequest().authenticated()
+            )
+            .oauth2Login(oauth2 -> oauth2
+                    .successHandler(oAuth2SuccessHandler)
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .headers(headers -> headers
@@ -48,6 +60,7 @@ public class SecurityConfig {
             )
             .build();
     }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
