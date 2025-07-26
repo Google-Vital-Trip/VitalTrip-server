@@ -1,8 +1,5 @@
 package com.vitaltrip.vitaltrip.domain.auth.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vitaltrip.vitaltrip.common.dto.ApiResponse;
-import com.vitaltrip.vitaltrip.domain.auth.dto.OAuthDto;
 import com.vitaltrip.vitaltrip.domain.auth.util.JwtUtil;
 import com.vitaltrip.vitaltrip.domain.user.User;
 import com.vitaltrip.vitaltrip.domain.user.repository.UserRepository;
@@ -10,11 +7,11 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -27,11 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class SimpleOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
-    private final ObjectMapper objectMapper;
     private final UserRepository userRepository;
 
-    @Value("${app.oauth2.authorized-redirect-uri:TEMP}")
-    private String authorizedRedirectUri;
+    @Value("${app.oauth2.authorized-redirect-uri}")
+    private String frontendRedirectUri;
 
     @Override
     @Transactional
@@ -51,29 +47,37 @@ public class SimpleOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
             String sub = oauth2User.getAttribute("sub");
 
             if (email == null || name == null) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "사용자 정보를 가져올 수 없습니다.");
+                redirectWithError(response, "OAUTH_ERROR", "사용자 정보를 가져올 수 없습니다");
                 return;
             }
 
             User user = processOAuth2User(email, name, picture, sub);
 
-            //프론트 리다이랙션 주소가 정해질때까지 임시 메서드
-            handleJsonResponse(response, user);
+            if (isProfileComplete(user)) {
+                String accessToken = jwtUtil.generateAccessToken(user);
+                String refreshToken = jwtUtil.generateRefreshToken(user);
+
+                redirectWithTokens(response, accessToken, refreshToken);
+            } else {
+                String tempToken = jwtUtil.generateTempToken(user);
+
+                redirectWithTempToken(response, tempToken, user.getEmail(), user.getName(),
+                    user.getProfileImageUrl());
+            }
 
         } catch (Exception e) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "인증 처리 중 오류가 발생했습니다.");
+            log.error("OAuth2 authentication error", e);
+            redirectWithError(response, "INTERNAL_ERROR", "인증 처리 중 오류가 발생했습니다");
         }
     }
 
     private User processOAuth2User(String email, String name, String picture, String sub) {
         return userRepository.findByEmail(email)
             .map(existingUser -> {
-
                 if (picture != null && !picture.equals(existingUser.getProfileImageUrl())) {
                     existingUser.updateProfileImage(picture);
                     return userRepository.save(existingUser);
                 }
-
                 return existingUser;
             })
             .orElseGet(() -> {
@@ -90,57 +94,49 @@ public class SimpleOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
             });
     }
 
-    //프론트 리다이랙션 주소가 정해질때까지 임시 메서드
-    private void handleJsonResponse(HttpServletResponse response, User user) throws IOException {
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        response.setStatus(HttpServletResponse.SC_OK);
-
-        if (isProfileComplete(user)) {
-            String accessToken = jwtUtil.generateAccessToken(user);
-            String refreshToken = jwtUtil.generateRefreshToken(user);
-
-            OAuthDto.OAuthUserInfo userInfo = new OAuthDto.OAuthUserInfo(
-                user.getId(),
-                user.getEmail(),
-                user.getName(),
-                user.getBirthDate(),
-                user.getCountryCode(),
-                user.getPhoneNumber(),
-                user.getProfileImageUrl(),
-                user.getProvider().name()
-            );
-
-            OAuthDto.CompleteProfileResponse successResponse = new OAuthDto.CompleteProfileResponse(
-                accessToken,
-                refreshToken,
-                userInfo
-            );
-
-            ApiResponse<OAuthDto.CompleteProfileResponse> apiResponse = ApiResponse.success(
-                successResponse);
-            response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
-
-        } else {
-            String tempToken = jwtUtil.generateTempToken(user);
-
-            OAuthDto.TempTokenResponse tempResponse = new OAuthDto.TempTokenResponse(
-                tempToken,
-                user.getEmail(),
-                user.getName(),
-                user.getProfileImageUrl(),
-                true
-            );
-
-            ApiResponse<OAuthDto.TempTokenResponse> apiResponse = ApiResponse.success(tempResponse);
-            response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
-        }
-
-    }
-
     private boolean isProfileComplete(User user) {
         return user.getBirthDate() != null &&
             user.getCountryCode() != null &&
             user.getCountryCode().length() == 2;
+    }
+
+    private void redirectWithTokens(HttpServletResponse response, String accessToken,
+        String refreshToken)
+        throws IOException {
+
+        String redirectUrl = frontendRedirectUri +
+            "?success=true" +
+            "&accessToken=" + URLEncoder.encode(accessToken, StandardCharsets.UTF_8) +
+            "&refreshToken=" + URLEncoder.encode(refreshToken, StandardCharsets.UTF_8);
+
+        response.sendRedirect(redirectUrl);
+    }
+
+    private void redirectWithTempToken(HttpServletResponse response, String tempToken,
+        String email, String name, String profileImageUrl) throws IOException {
+
+        StringBuilder redirectUrl = new StringBuilder(frontendRedirectUri)
+            .append("?needsProfile=true")
+            .append("&tempToken=").append(URLEncoder.encode(tempToken, StandardCharsets.UTF_8))
+            .append("&email=").append(URLEncoder.encode(email, StandardCharsets.UTF_8))
+            .append("&name=").append(URLEncoder.encode(name, StandardCharsets.UTF_8));
+
+        if (profileImageUrl != null) {
+            redirectUrl.append("&profileImageUrl=")
+                .append(URLEncoder.encode(profileImageUrl, StandardCharsets.UTF_8));
+        }
+
+        response.sendRedirect(redirectUrl.toString());
+    }
+
+    private void redirectWithError(HttpServletResponse response, String errorCode, String message)
+        throws IOException {
+
+        String redirectUrl = frontendRedirectUri +
+            "?error=true" +
+            "&errorCode=" + URLEncoder.encode(errorCode, StandardCharsets.UTF_8) +
+            "&message=" + URLEncoder.encode(message, StandardCharsets.UTF_8);
+
+        response.sendRedirect(redirectUrl);
     }
 }

@@ -38,7 +38,7 @@ public class JwtUtil {
     }
 
     public String generateTempToken(User user) {
-        long tempTokenExpiration = 1800000; // 30분
+        long tempTokenExpiration = 1800000;
 
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + tempTokenExpiration);
