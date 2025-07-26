@@ -42,9 +42,16 @@ public class SecurityConfig {
                     "/api/auth/login",
                     "/api/auth/refresh",
 
-                    // OAuth2 관련
+                    // OAuth2 API
+                    "/api/oauth2/**",
+
+                    // OAuth2 관련 - 더 구체적으로 허용
                     "/oauth2/**",
                     "/login/oauth2/**",
+                    "/login/oauth2/code/**",
+                    "/login/oauth2/code/google",
+                    "/login",
+                    "/login/**",
 
                     // 개발/문서 관련
                     "/swagger-ui/**",
@@ -69,13 +76,31 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
+
+        // 모든 오리진 허용 (개발용) - 운영에서는 구체적인 도메인으로 제한
         configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList(
-            "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"
+
+        // Swagger UI에서 사용하는 오리진 명시적 추가
+        configuration.setAllowedOrigins(Arrays.asList(
+            "http://localhost:8080",
+            "http://dkswoalstest.duckdns.org",
+            "https://dkswoalstest.duckdns.org",
+            "https://vitaltrip.vercel.app"
         ));
+
+        configuration.setAllowedMethods(Arrays.asList(
+            "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"
+        ));
+
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
+
+        // Preflight 요청 처리
+        configuration.setExposedHeaders(Arrays.asList(
+            "Authorization", "Content-Type", "X-Requested-With", "accept", "Origin",
+            "Access-Control-Request-Method", "Access-Control-Request-Headers"
+        ));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
