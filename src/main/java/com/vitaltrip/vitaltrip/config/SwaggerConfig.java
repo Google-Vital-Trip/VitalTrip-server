@@ -66,7 +66,10 @@ public class SwaggerConfig {
                     .description("로컬 개발 서버"),
                 new Server()
                     .url("http://dkswoalstest.duckdns.org")
-                    .description("개발 환경 서버")
+                    .description("개발 환경 서버"),
+                new Server()
+                    .url("https://dkswoalstest.duckdns.org")
+                    .description("개발 환경 서버(https)")
             ))
             .components(new Components()
                 .addSecuritySchemes("bearerAuth", new SecurityScheme()
