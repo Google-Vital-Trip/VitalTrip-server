@@ -332,32 +332,29 @@ public class AuthController {
         ),
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "401",
-            description = "인증되지 않은 사용자",
+            description = "인증되지 않은 사용자 또는 유효하지 않은 토큰",
             content = @Content(
                 mediaType = "application/json",
-                examples = @ExampleObject(
-                    value = """
-                        {
-                          "message": "인증이 필요합니다.",
-                          "errorCode": "UNAUTHORIZED"
-                        }
-                        """
-                )
-            )
-        ),
-        @io.swagger.v3.oas.annotations.responses.ApiResponse(
-            responseCode = "403",
-            description = "유효하지 않은 토큰",
-            content = @Content(
-                mediaType = "application/json",
-                examples = @ExampleObject(
-                    value = """
-                        {
-                          "message": "유효하지 않은 토큰입니다.",
-                          "errorCode": "INVALID_TOKEN"
-                        }
-                        """
-                )
+                examples = {
+                    @ExampleObject(
+                        name = "인증되지 않은 사용자",
+                        value = """
+                            {
+                              "message": "인증이 필요합니다.",
+                              "errorCode": "UNAUTHORIZED"
+                            }
+                            """
+                    ),
+                    @ExampleObject(
+                        name = "유효하지 않은 토큰",
+                        value = """
+                            {
+                              "message": "유효하지 않은 토큰입니다.",
+                              "errorCode": "INVALID_TOKEN"
+                            }
+                            """
+                    )
+                }
             )
         )
     })
@@ -415,7 +412,17 @@ public class AuthController {
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "401",
             description = "인증되지 않은 사용자",
-            content = @Content(mediaType = "application/json")
+            content = @Content(
+                mediaType = "application/json",
+                examples = @ExampleObject(
+                    value = """
+                        {
+                          "message": "인증이 필요합니다.",
+                          "errorCode": "UNAUTHORIZED"
+                        }
+                        """
+                )
+            )
         )
     })
     public ApiResponse<String> updateProfile(
@@ -553,7 +560,17 @@ public class AuthController {
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
             responseCode = "401",
             description = "인증되지 않은 사용자",
-            content = @Content(mediaType = "application/json")
+            content = @Content(
+                mediaType = "application/json",
+                examples = @ExampleObject(
+                    value = """
+                        {
+                          "message": "인증이 필요합니다.",
+                          "errorCode": "UNAUTHORIZED"
+                        }
+                        """
+                )
+            )
         )
     })
     public ApiResponse<String> logout(
