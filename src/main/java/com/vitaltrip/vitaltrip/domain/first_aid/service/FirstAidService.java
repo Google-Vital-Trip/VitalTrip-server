@@ -20,7 +20,7 @@ public class FirstAidService {
         String advice = geminiClient.generateContent(prompt);
 
         // todo - advice를 위한 프롬프트 고도화, confidence 계산식, 추천 블로그 선택 알고리즘
-        return EmergencyChatAdviceResponse.from(advice, "temp", 100.0,
+        return EmergencyChatAdviceResponse.from(advice, "summery", "temp", 100.0,
             List.of("https://www.eunwoo-levi.blog/"));
     }
 
