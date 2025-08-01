@@ -439,7 +439,7 @@ class AuthIntegrationTest {
 
             // then
             result.andDo(print())
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
         }
 
         @Test
@@ -451,7 +451,7 @@ class AuthIntegrationTest {
 
             // then
             result.andDo(print())
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
         }
 
         @Test
