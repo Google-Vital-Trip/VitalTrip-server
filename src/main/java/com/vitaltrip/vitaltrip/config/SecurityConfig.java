@@ -36,36 +36,47 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
+                // 기본 경로 허용 (중요!)
+                .requestMatchers("/", "/home", "/health", "/actuator/**").permitAll()
+
+                // 기본 인증 API
                 .requestMatchers(
-                    // 기본 인증 API
                     "/api/auth/signup",
                     "/api/auth/login",
                     "/api/auth/refresh",
-                    "/api/auth/check-email",
+                    "/api/auth/check-email"
+                ).permitAll()
 
-                    // OAuth2 API
-                    "/api/oauth2/**",
+                // OAuth2 API
+                .requestMatchers("/api/oauth2/**").permitAll()
 
-                    // OAuth2 관련 - 더 구체적으로 허용
+                // OAuth2 관련 - 더 구체적으로 허용
+                .requestMatchers(
                     "/oauth2/**",
                     "/login/oauth2/**",
                     "/login/oauth2/code/**",
                     "/login/oauth2/code/google",
                     "/login",
-                    "/login/**",
+                    "/login/**"
+                ).permitAll()
 
-                    // 개발/문서 관련
+                // 개발/문서 관련
+                .requestMatchers(
                     "/swagger-ui/**",
                     "/v3/api-docs/**",
-                    "/h2-console/**"
+                    "/h2-console/**",
+                    "/favicon.ico",
+                    "/error"
                 ).permitAll()
+
+                // 나머지 모든 요청은 인증 필요
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
                 .successHandler(oAuth2SuccessHandler)
             )
             .exceptionHandling(exceptions -> exceptions
-                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.FORBIDDEN))
+                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))  // 401로 변경
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .headers(headers -> headers
@@ -78,10 +89,10 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // 모든 오리진 허용 (개발용) - 운영에서는 구체적인 도메인으로 제한
+        // 모든 오리진 허용 (개발용)
         configuration.setAllowedOriginPatterns(Arrays.asList("*"));
 
-        // Swagger UI에서 사용하는 오리진 명시적 추가
+        // 구체적인 오리진도 명시
         configuration.setAllowedOrigins(Arrays.asList(
             "http://localhost:8080",
             "http://dkswoalstest.duckdns.org",
@@ -97,7 +108,6 @@ public class SecurityConfig {
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
-        // Preflight 요청 처리
         configuration.setExposedHeaders(Arrays.asList(
             "Authorization", "Content-Type", "X-Requested-With", "accept", "Origin",
             "Access-Control-Request-Method", "Access-Control-Request-Headers"
