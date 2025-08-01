@@ -36,6 +36,7 @@ public class FirstAidController {
             
             ## 주의사항
             - 현재는 단순 프롬프트를 활용한 응급처치 조언만을 반환하며 일부 필드는 고정값을 포함합니다.
+            - AI 응답은 영어로 제공됩니다.
             """
     )
     @ApiResponses(value = {
@@ -51,7 +52,7 @@ public class FirstAidController {
                         {
                           "message": "성공",
                           "data": {
-                            "content": "심정지 상황에서는 즉시 다음과 같이 행동하세요:\\n\\n1. **119 신고**: 먼저 119에 즉시 신고하거나 주변 사람에게 신고를 요청하세요.\\n\\n2. **심폐소생술 시작**:\\n   - 환자를 단단한 바닥에 눕히세요\\n   - 가슴 중앙(젖꼭지 사이)에 손바닥 뒤꿈치를 올려놓으세요\\n   - 양손을 깍지 끼고 팔을 쭉 펴서 수직으로 압박하세요\\n   - 분당 100-120회 속도로 5-6cm 깊이로 강하게 압박하세요\\n\\n3. **지속적인 압박**: 전문의료진이 도착할 때까지 중단 없이 계속하세요.",
+                            "content": "For cardiac arrest situation, take the following actions immediately:\\n\\n1. **Call 911**: First, call 911 immediately or ask someone nearby to make the call.\\n\\n2. **Start CPR**:\\n   - Place the patient on a firm, flat surface\\n   - Position the heel of your palm on the center of the chest (between the nipples)\\n   - Interlace your fingers and keep your arms straight\\n   - Compress hard and fast at a rate of 100-120 per minute\\n   - Push at least 2 inches (5-6 cm) deep\\n\\n3. **Continue compressions**: Keep going without interruption until professional medical help arrives.",
                             "recommendedAction": "temp",
                             "confidence": 100.0,
                             "blogLinks": [
@@ -98,9 +99,58 @@ public class FirstAidController {
         )
     })
     public ApiResponse<EmergencyChatAdviceResponse> getEmergencyChatAdvice(
+        @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "응급처치 조언 요청 정보",
+            required = true,
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = EmergencyChatAdviceRequest.class),
+                examples = {
+                    @ExampleObject(
+                        name = "심정지 상황",
+                        summary = "의식불명 환자 발견",
+                        value = """
+                            {
+                              "emergencyType": "Cardiac Arrest",
+                              "userMessage": "I found an unconscious person with no breathing. What should I do?"
+                            }
+                            """
+                    ),
+                    @ExampleObject(
+                        name = "출혈 상황",
+                        summary = "칼에 베인 상처",
+                        value = """
+                            {
+                              "emergencyType": "Severe Bleeding",
+                              "userMessage": "I cut myself with a knife and there's a lot of bleeding. How should I treat it?"
+                            }
+                            """
+                    ),
+                    @ExampleObject(
+                        name = "화상 상황",
+                        summary = "끓는 물에 데임",
+                        value = """
+                            {
+                              "emergencyType": "Burns",
+                              "userMessage": "I burned my hand with boiling water and blisters have formed. How should I treat it?"
+                            }
+                            """
+                    ),
+                    @ExampleObject(
+                        name = "질식 상황",
+                        summary = "음식물 기도 폐쇄",
+                        value = """
+                            {
+                              "emergencyType": "Choking",
+                              "userMessage": "Food is stuck in the throat and the person can't breathe. This is urgent!"
+                            }
+                            """
+                    )
+                }
+            )
+        )
         @Valid @RequestBody EmergencyChatAdviceRequest request) {
         EmergencyChatAdviceResponse response = firstAidService.generateEmergencyAdvice(request);
         return ApiResponse.success(response);
     }
-
 }

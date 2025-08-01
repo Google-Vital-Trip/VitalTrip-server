@@ -27,13 +27,13 @@ public class FirstAidService {
     // 임시 프롬프트 - 차후 응급처치 메뉴얼 제공 알고리즘 수정 예정
     private String createEmergencyPrompt(String emergencyType, String userMessage) {
         return String.format("""
-            당신은 응급의료 전문가입니다. 다음 응급상황에 대해 도움을 주세요:
+            You are an emergency medical expert. Please provide assistance for the following emergency situation:
             
-            응급상황 유형: %s
-            사용자 메시지: %s
+            Emergency Type: %s
+            User Message: %s
             
-            간결하고 명확하게 즉시 취해야 할 행동을 알려주세요.
-            생명과 관련된 응급상황이므로 정확한 정보만 제공해주세요.
+            Please provide concise and clear instructions on what actions should be taken immediately.
+            Since this is a life-related emergency situation, please provide only accurate information.
             """, emergencyType, userMessage);
     }
 
