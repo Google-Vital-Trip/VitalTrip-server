@@ -1,6 +1,7 @@
 package com.vitaltrip.vitaltrip.domain.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -41,6 +42,7 @@ public class AuthDto {
         @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "올바른 전화번호 형식이 아닙니다 (예: +821012345678)")
         String phoneNumber
     ) {
+
         public boolean isPasswordMatched() {
             return password != null && password.equals(passwordConfirm);
         }
@@ -103,6 +105,7 @@ public class AuthDto {
         @NotBlank(message = "새 비밀번호 확인은 필수입니다")
         String newPasswordConfirm
     ) {
+
         public boolean isNewPasswordMatched() {
             return newPassword != null && newPassword.equals(newPasswordConfirm);
         }
@@ -124,6 +127,13 @@ public class AuthDto {
 
         @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "올바른 전화번호 형식이 아닙니다 (예: +821012345678)")
         String phoneNumber
+    ) {
+
+    }
+
+    public record EmailCheckResponse(
+        @Schema(description = "이메일 사용 가능 여부", example = "true")
+        boolean available
     ) {
 
     }

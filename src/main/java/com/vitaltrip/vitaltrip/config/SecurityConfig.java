@@ -41,6 +41,7 @@ public class SecurityConfig {
                     "/api/auth/signup",
                     "/api/auth/login",
                     "/api/auth/refresh",
+                    "/api/auth/check-email",
 
                     // OAuth2 API
                     "/api/oauth2/**",
