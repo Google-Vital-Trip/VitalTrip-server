@@ -1,6 +1,7 @@
 package com.vitaltrip.vitaltrip.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +15,8 @@ public class RestClientConfig {
     @Value("${gemini.api.base-url}")
     private String geminiBaseUrl;
 
-    @Bean("geminiRestClient")
+    @Bean
+    @Qualifier("geminiRestClient")
     public RestClient geminiRestClient() {
         return RestClient.builder()
             .baseUrl(geminiBaseUrl)
@@ -23,7 +25,8 @@ public class RestClientConfig {
             .build();
     }
 
-    @Bean("defaultRestClient")
+    @Bean
+    @Qualifier("defaultRestClient")
     public RestClient defaultRestClient() {
         return RestClient.builder()
             .requestInterceptor(loggingInterceptor())
