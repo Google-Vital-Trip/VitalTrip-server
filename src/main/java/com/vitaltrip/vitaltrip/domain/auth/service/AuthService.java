@@ -23,7 +23,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public AuthDto.AuthResponse signUp(AuthDto.SignUpRequest request) {
+    public void signUp(AuthDto.SignUpRequest request) {
 
         if (userRepository.existsByEmail(request.email())) {
             throw new CustomException(ErrorType.DUPLICATE_EMAIL);
@@ -46,9 +46,7 @@ public class AuthService {
             .role(User.Role.USER)
             .build();
 
-        User savedUser = userRepository.save(user);
-
-        return createAuthResponse(savedUser);
+        userRepository.save(user);
     }
 
     public AuthDto.AuthResponse login(AuthDto.LoginRequest request) {
@@ -114,6 +112,11 @@ public class AuthService {
             request.phoneNumber()
         );
 
+    }
+
+    public AuthDto.EmailCheckResponse checkEmailAvailability(String email) {
+        boolean isAvailable = !userRepository.existsByEmail(email);
+        return new AuthDto.EmailCheckResponse(isAvailable);
     }
 
     private AuthDto.AuthResponse createAuthResponse(User user) {

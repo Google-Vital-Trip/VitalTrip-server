@@ -13,6 +13,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,7 +39,7 @@ public class AuthController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(
         summary = "회원가입",
-        description = "새로운 사용자 계정을 생성합니다. 이메일, 비밀번호, 개인정보를 입력받아 계정을 생성하고 JWT 토큰을 반환합니다."
+        description = "새로운 사용자 계정을 생성합니다. 이메일, 비밀번호, 개인정보를 입력받아 계정을 생성합니다."
     )
     @ApiResponses(value = {
         @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -48,20 +51,7 @@ public class AuthController {
                 examples = @ExampleObject(
                     value = """
                         {
-                          "message": "성공",
-                          "data": {
-                            "accessToken": "eyJhbGciOiJIUzI1NiJ9...",
-                            "refreshToken": "eyJhbGciOiJIUzI1NiJ9...",
-                            "user": {
-                              "id": 1,
-                              "email": "test@example.com",
-                              "name": "홍길동",
-                              "birthDate": "1990-01-01",
-                              "countryCode": "KR",
-                              "phoneNumber": "+821012345678",
-                              "profileImageUrl": null
-                            }
-                          }
+                          "message": "성공"
                         }
                         """
                 )
@@ -131,8 +121,8 @@ public class AuthController {
             )
         )
         AuthDto.SignUpRequest request) {
-        AuthDto.AuthResponse response = authService.signUp(request);
-        return ApiResponse.success(response);
+        authService.signUp(request);
+        return ApiResponse.success("성공");
     }
 
     @PostMapping("/login")
@@ -569,5 +559,78 @@ public class AuthController {
     public ApiResponse<String> logout(
         @Parameter(hidden = true) @AuthenticationPrincipal User user) {
         return ApiResponse.success("로그아웃되었습니다. 클라이언트에서 토큰을 삭제해주세요.");
+    }
+
+    @GetMapping("/check-email")
+    @Operation(
+        summary = "이메일 중복 검사",
+        description = "회원가입 전 이메일이 이미 사용 중인지 확인합니다."
+    )
+    @ApiResponses(value = {
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "200",
+            description = "이메일 중복 검사 완료",
+            content = @Content(
+                mediaType = "application/json",
+                examples = {
+                    @ExampleObject(
+                        name = "사용 가능한 이메일",
+                        value = """
+                            {
+                              "message": "사용 가능한 이메일입니다",
+                              "data": {
+                                "available": true
+                              }
+                            }
+                            """
+                    ),
+                    @ExampleObject(
+                        name = "이미 사용 중인 이메일",
+                        value = """
+                            {
+                              "message": "이미 사용 중인 이메일입니다",
+                              "data": {
+                                "available": false
+                              }
+                            }
+                            """
+                    )
+                }
+            )
+        ),
+        @io.swagger.v3.oas.annotations.responses.ApiResponse(
+            responseCode = "400",
+            description = "유효하지 않은 이메일 형식",
+            content = @Content(
+                mediaType = "application/json",
+                examples = @ExampleObject(
+                    value = """
+                        {
+                          "message": "유효한 이메일 형식이 아닙니다",
+                          "errorCode": "INVALID_REQUEST"
+                        }
+                        """
+                )
+            )
+        )
+    })
+    public ApiResponse<AuthDto.EmailCheckResponse> checkEmailAvailability(
+        @Parameter(
+            description = "확인할 이메일 주소",
+            example = "test@example.com",
+            required = true
+        )
+        @RequestParam("email")
+        @Email(message = "유효한 이메일 형식이 아닙니다")
+        @NotBlank(message = "이메일은 필수입니다")
+        String email) {
+
+        AuthDto.EmailCheckResponse response = authService.checkEmailAvailability(email);
+
+        if (response.available()) {
+            return ApiResponse.success(response);
+        } else {
+            return ApiResponse.success(response);
+        }
     }
 }

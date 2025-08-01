@@ -85,14 +85,7 @@ class AuthIntegrationTest {
             result.andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.message").value("성공"))
-                .andExpect(jsonPath("$.data.accessToken").exists())
-                .andExpect(jsonPath("$.data.refreshToken").exists())
-                .andExpect(jsonPath("$.data.user.id").exists())
-                .andExpect(jsonPath("$.data.user.email").value("test@example.com"))
-                .andExpect(jsonPath("$.data.user.name").value("홍길동"))
-                .andExpect(jsonPath("$.data.user.birthDate").value("1990-01-01"))
-                .andExpect(jsonPath("$.data.user.countryCode").value("KR"))
-                .andExpect(jsonPath("$.data.user.phoneNumber").value("+821012345678"))
+                .andExpect(jsonPath("$.data").doesNotExist())
                 .andExpect(jsonPath("$.errorCode").doesNotExist());
 
             // 데이터베이스 검증
@@ -125,10 +118,14 @@ class AuthIntegrationTest {
             // then
             result.andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.data.user.email").value("test2@example.com"))
-                .andExpect(jsonPath("$.data.user.name").value("김철수"))
-                .andExpect(jsonPath("$.data.user.countryCode").value("US"))
-                .andExpect(jsonPath("$.data.user.phoneNumber").isEmpty());
+                .andExpect(jsonPath("$.message").value("성공"))
+                .andExpect(jsonPath("$.data").doesNotExist());
+
+            // 데이터베이스 검증
+            User savedUser = userRepository.findByEmail("test2@example.com").orElseThrow();
+            assertThat(savedUser.getName()).isEqualTo("김철수");
+            assertThat(savedUser.getCountryCode()).isEqualTo("US");
+            assertThat(savedUser.getPhoneNumber()).isNull();
         }
 
         @Test
@@ -338,12 +335,17 @@ class AuthIntegrationTest {
         @BeforeEach
         void setUpUserAndToken() throws Exception {
             // 회원가입
-            ResultActions signupResult = mockMvc.perform(post("/api/auth/signup")
+            mockMvc.perform(post("/api/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(validSignUpRequest)));
 
+            // 로그인하여 토큰 획득
+            ResultActions loginResult = mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(validLoginRequest)));
+
             // 리프레시 토큰 추출
-            String response = signupResult.andReturn().getResponse().getContentAsString();
+            String response = loginResult.andReturn().getResponse().getContentAsString();
             refreshToken = objectMapper.readTree(response)
                 .path("data")
                 .path("refreshToken")
@@ -397,12 +399,17 @@ class AuthIntegrationTest {
 
         @BeforeEach
         void setUpUserAndToken() throws Exception {
-            // 회원가입 후 토큰 추출
-            ResultActions signupResult = mockMvc.perform(post("/api/auth/signup")
+            // 회원가입
+            mockMvc.perform(post("/api/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(validSignUpRequest)));
 
-            String response = signupResult.andReturn().getResponse().getContentAsString();
+            // 로그인하여 토큰 획득
+            ResultActions loginResult = mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(validLoginRequest)));
+
+            String response = loginResult.andReturn().getResponse().getContentAsString();
             accessToken = objectMapper.readTree(response)
                 .path("data")
                 .path("accessToken")
@@ -523,60 +530,56 @@ class AuthIntegrationTest {
         }
     }
 
-    @Nested
-    @DisplayName("회원가입과 로그인 플로우 통합 테스트")
-    class SignUpLoginFlowTest {
+    @Test
+    @DisplayName("전체 플로우 테스트: 회원가입 → 로그인 → 내 정보 조회 → 프로필 수정")
+    void fullAuthFlow_Success() throws Exception {
+        // 1. 회원가입
+        ResultActions signupResult = mockMvc.perform(post("/api/auth/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(validSignUpRequest)))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.message").value("성공"))
+            .andExpect(jsonPath("$.data").doesNotExist());
 
-        @Test
-        @DisplayName("전체 플로우 테스트: 회원가입 → 로그인 → 내 정보 조회 → 프로필 수정")
-        void fullAuthFlow_Success() throws Exception {
-            // 1. 회원가입
-            ResultActions signupResult = mockMvc.perform(post("/api/auth/signup")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(validSignUpRequest)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.data.user.email").value("test@example.com"));
+        // 2. 로그인
+        ResultActions loginResult = mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(validLoginRequest)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.accessToken").exists());
 
-            // 2. 로그인
-            ResultActions loginResult = mockMvc.perform(post("/api/auth/login")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(validLoginRequest)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.accessToken").exists());
+        // 액세스 토큰 추출
+        String loginResponse = loginResult.andReturn().getResponse().getContentAsString();
+        String accessToken = objectMapper.readTree(loginResponse)
+            .path("data")
+            .path("accessToken")
+            .asText();
 
-            // 액세스 토큰 추출
-            String loginResponse = loginResult.andReturn().getResponse().getContentAsString();
-            String accessToken = objectMapper.readTree(loginResponse)
-                .path("data")
-                .path("accessToken")
-                .asText();
+        // 3. 내 정보 조회
+        mockMvc.perform(get("/api/auth/me")
+                .header("Authorization", "Bearer " + accessToken))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.name").value("홍길동"));
 
-            // 3. 내 정보 조회
-            mockMvc.perform(get("/api/auth/me")
-                    .header("Authorization", "Bearer " + accessToken))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.name").value("홍길동"));
+        // 4. 프로필 수정
+        AuthDto.ProfileUpdateRequest updateRequest = new AuthDto.ProfileUpdateRequest(
+            "홍길동2",
+            LocalDate.of(1990, 1, 1),
+            "KR",
+            "+821012345679"
+        );
 
-            // 4. 프로필 수정
-            AuthDto.ProfileUpdateRequest updateRequest = new AuthDto.ProfileUpdateRequest(
-                "홍길동2",
-                LocalDate.of(1990, 1, 1),
-                "KR",
-                "+821012345679"
-            );
+        mockMvc.perform(put("/api/auth/profile")
+                .header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updateRequest)))
+            .andExpect(status().isOk());
 
-            mockMvc.perform(put("/api/auth/profile")
-                    .header("Authorization", "Bearer " + accessToken)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(updateRequest)))
-                .andExpect(status().isOk());
-
-            // 5. 변경된 정보 확인
-            mockMvc.perform(get("/api/auth/me")
-                    .header("Authorization", "Bearer " + accessToken))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.name").value("홍길동2"))
-                .andExpect(jsonPath("$.data.phoneNumber").value("+821012345679"));
-        }
+        // 5. 변경된 정보 확인
+        mockMvc.perform(get("/api/auth/me")
+                .header("Authorization", "Bearer " + accessToken))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.name").value("홍길동2"))
+            .andExpect(jsonPath("$.data.phoneNumber").value("+821012345679"));
     }
 }

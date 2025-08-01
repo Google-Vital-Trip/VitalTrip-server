@@ -1,18 +1,20 @@
 package com.vitaltrip.vitaltrip.domain.auth.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatNoException;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import com.vitaltrip.vitaltrip.common.exception.CustomException;
 import com.vitaltrip.vitaltrip.common.exception.ErrorType;
 import com.vitaltrip.vitaltrip.domain.auth.dto.AuthDto;
-import com.vitaltrip.vitaltrip.domain.auth.service.AuthService;
 import com.vitaltrip.vitaltrip.domain.auth.util.JwtUtil;
 import com.vitaltrip.vitaltrip.domain.user.User;
 import com.vitaltrip.vitaltrip.domain.user.repository.UserRepository;
@@ -82,67 +84,89 @@ class AuthServiceTest {
     class SignUpTest {
 
         @Test
-        @DisplayName("회원가입 성공")
+        @DisplayName("정상적인 회원가입 요청시 성공한다")
         void signUp_Success() {
             // given
-            given(userRepository.existsByEmail(anyString())).willReturn(false);
-            given(passwordEncoder.encode(anyString())).willReturn("encodedPassword");
+            given(userRepository.existsByEmail(validSignUpRequest.email())).willReturn(false);
+            given(passwordEncoder.encode(validSignUpRequest.password())).willReturn(
+                "encodedPassword");
             given(userRepository.save(any(User.class))).willReturn(testUser);
-            given(jwtUtil.generateAccessToken(any(User.class))).willReturn("accessToken");
-            given(jwtUtil.generateRefreshToken(any(User.class))).willReturn("refreshToken");
 
-            // when
-            AuthDto.AuthResponse response = authService.signUp(validSignUpRequest);
+            // when & then
+            assertThatNoException().isThrownBy(() -> authService.signUp(validSignUpRequest));
 
-            // then
-            assertThat(response).isNotNull();
-            assertThat(response.accessToken()).isEqualTo("accessToken");
-            assertThat(response.refreshToken()).isEqualTo("refreshToken");
-            assertThat(response.user().email()).isEqualTo("test@example.com");
-            assertThat(response.user().name()).isEqualTo("홍길동");
-
-            verify(userRepository).existsByEmail("test@example.com");
-            verify(passwordEncoder).encode("Password123!");
-            verify(userRepository).save(any(User.class));
+            // verify
+            then(userRepository).should().existsByEmail(validSignUpRequest.email());
+            then(passwordEncoder).should().encode(validSignUpRequest.password());
+            then(userRepository).should().save(any(User.class));
         }
 
         @Test
-        @DisplayName("이메일 중복 시 예외 발생")
+        @DisplayName("이미 존재하는 이메일로 회원가입시 예외가 발생한다")
         void signUp_DuplicateEmail_ThrowsException() {
             // given
-            given(userRepository.existsByEmail(anyString())).willReturn(true);
+            given(userRepository.existsByEmail(validSignUpRequest.email())).willReturn(true);
 
             // when & then
             assertThatThrownBy(() -> authService.signUp(validSignUpRequest))
                 .isInstanceOf(CustomException.class)
                 .hasFieldOrPropertyWithValue("errorType", ErrorType.DUPLICATE_EMAIL);
 
-            verify(userRepository).existsByEmail("test@example.com");
-            verify(passwordEncoder, never()).encode(anyString());
-            verify(userRepository, never()).save(any(User.class));
+            // verify
+            then(userRepository).should().existsByEmail(validSignUpRequest.email());
+            then(passwordEncoder).should(never()).encode(any());
+            then(userRepository).should(never()).save(any(User.class));
         }
 
         @Test
-        @DisplayName("비밀번호 불일치 시 예외 발생")
+        @DisplayName("비밀번호가 일치하지 않으면 예외가 발생한다")
         void signUp_PasswordMismatch_ThrowsException() {
             // given
             AuthDto.SignUpRequest mismatchRequest = new AuthDto.SignUpRequest(
                 "test@example.com",
                 "홍길동",
                 "Password123!",
-                "DifferentPassword!",
+                "DifferentPassword123!",  // 다른 비밀번호
                 LocalDate.of(1990, 1, 1),
                 "KR",
                 "+821012345678"
             );
-
-            given(userRepository.existsByEmail(anyString())).willReturn(false);
+            given(userRepository.existsByEmail(mismatchRequest.email())).willReturn(false);
 
             // when & then
             assertThatThrownBy(() -> authService.signUp(mismatchRequest))
                 .isInstanceOf(CustomException.class)
                 .hasFieldOrPropertyWithValue("errorType", ErrorType.INVALID_REQUEST)
                 .hasMessageContaining("비밀번호와 비밀번호 확인이 일치하지 않습니다");
+
+            // verify
+            then(userRepository).should().existsByEmail(mismatchRequest.email());
+            then(passwordEncoder).should(never()).encode(any());
+            then(userRepository).should(never()).save(any(User.class));
+        }
+
+        @Test
+        @DisplayName("사용자 정보가 올바르게 저장된다")
+        void signUp_UserDataSavedCorrectly() {
+            // given
+            given(userRepository.existsByEmail(validSignUpRequest.email())).willReturn(false);
+            given(passwordEncoder.encode(validSignUpRequest.password())).willReturn(
+                "encodedPassword");
+
+            // when
+            authService.signUp(validSignUpRequest);
+
+            // then
+            then(userRepository).should().save(argThat(user ->
+                user.getEmail().equals(validSignUpRequest.email()) &&
+                    user.getName().equals(validSignUpRequest.name()) &&
+                    user.getPasswordHash().equals("encodedPassword") &&
+                    user.getBirthDate().equals(validSignUpRequest.birthDate()) &&
+                    user.getCountryCode().equals(validSignUpRequest.countryCode()) &&
+                    user.getPhoneNumber().equals(validSignUpRequest.phoneNumber()) &&
+                    user.getProvider() == User.AuthProvider.LOCAL &&
+                    user.getRole() == User.Role.USER
+            ));
         }
     }
 
