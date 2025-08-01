@@ -69,6 +69,11 @@ public class SecurityConfig {
                     "/error"
                 ).permitAll()
 
+                // first-aid 관련 임시 허용
+                .requestMatchers(
+                    "/api/first-aid/*"
+                ).permitAll()
+
                 // 나머지 모든 요청은 인증 필요
                 .anyRequest().authenticated()
             )
