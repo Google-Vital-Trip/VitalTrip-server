@@ -3,10 +3,12 @@ package com.vitaltrip.vitaltrip.common.exception;
 import com.vitaltrip.vitaltrip.common.dto.ApiResponse;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 @Slf4j
 @RestControllerAdvice
@@ -24,7 +26,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Object>> handleValidationException(MethodArgumentNotValidException e) {
+    public ResponseEntity<ApiResponse<Object>> handleValidationException(
+        MethodArgumentNotValidException e) {
         log.warn("Validation Exception: {}", e.getMessage());
 
         return ResponseEntity
@@ -33,6 +36,22 @@ public class GlobalExceptionHandler {
                 ErrorType.VALIDATION_FAILED.getMessage(),
                 ErrorType.VALIDATION_FAILED.getCode()
             ));
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ApiResponse<Object>> handleHandlerMethodValidationException(
+        HandlerMethodValidationException e) {
+        log.warn("Handler Method Validation Exception: {}", e.getMessage());
+
+        String errorMessage = e.getParameterValidationResults().stream()
+            .flatMap(result -> result.getResolvableErrors().stream())
+            .findFirst()
+            .map(MessageSourceResolvable::getDefaultMessage)
+            .orElse(ErrorType.VALIDATION_FAILED.getMessage());
+
+        return ResponseEntity
+            .status(ErrorType.VALIDATION_FAILED.getStatus())
+            .body(ApiResponse.error(errorMessage, ErrorType.VALIDATION_FAILED.getCode()));
     }
 
     @ExceptionHandler(Exception.class)
