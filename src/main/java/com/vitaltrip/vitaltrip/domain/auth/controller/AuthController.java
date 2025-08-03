@@ -624,7 +624,7 @@ public class AuthController {
                     value = """
                         {
                           "message": "유효한 이메일 형식이 아닙니다",
-                          "errorCode": "INVALID_REQUEST"
+                          "errorCode": "VALIDATION_FAILED"
                         }
                         """
                 )
