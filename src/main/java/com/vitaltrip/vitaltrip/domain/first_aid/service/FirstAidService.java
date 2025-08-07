@@ -16,11 +16,11 @@ public class FirstAidService {
     private final GeminiClient geminiClient;
 
     public EmergencyChatAdviceResponse generateEmergencyAdvice(EmergencyChatAdviceRequest request) {
-        String prompt = createEmergencyPrompt(request.emergencyType(), request.userMessage());
+        String prompt = createEmergencyPrompt(request.symptomType(), request.symptomDetail());
         String advice = geminiClient.generateContent(prompt);
 
         // todo - advice를 위한 프롬프트 고도화, confidence 계산식, 추천 블로그 선택 알고리즘
-        return EmergencyChatAdviceResponse.from(advice, "summery", "temp", 100.0,
+        return EmergencyChatAdviceResponse.from(advice, "summary", "temp", 100.0,
             List.of("https://www.eunwoo-levi.blog/"));
     }
 
@@ -29,8 +29,8 @@ public class FirstAidService {
         return String.format("""
             You are an emergency medical expert. Please provide assistance for the following emergency situation:
             
-            Emergency Type: %s
-            User Message: %s
+            Symptom Type: %s
+            Symptom Detail: %s
             
             Please provide concise and clear instructions on what actions should be taken immediately.
             Since this is a life-related emergency situation, please provide only accurate information.

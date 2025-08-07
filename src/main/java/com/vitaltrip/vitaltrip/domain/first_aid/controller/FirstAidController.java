@@ -35,7 +35,7 @@ public class FirstAidController {
             - 차후 추가 예정입니다.
             
             ## 주의사항
-            - 현재는 단순 프롬프트를 활용한 응급처치 조언만을 반환하며 일부 필드(summery, recommendedAction, confidence, blogLinks)는 고정값을 포함합니다.
+            - 현재는 단순 프롬프트를 활용한 응급처치 조언만을 반환하며 일부 필드(summary, recommendedAction, confidence, blogLinks)는 고정값을 포함합니다.
             - AI 응답은 영어로 제공됩니다.
             """
     )
@@ -53,7 +53,7 @@ public class FirstAidController {
                           "message": "성공",
                           "data": {
                             "content": "For cardiac arrest situation, take the following actions immediately:\\n\\n1. **Call 911**: First, call 911 immediately or ask someone nearby to make the call.\\n\\n2. **Start CPR**:\\n   - Place the patient on a firm, flat surface\\n   - Position the heel of your palm on the center of the chest (between the nipples)\\n   - Interlace your fingers and keep your arms straight\\n   - Compress hard and fast at a rate of 100-120 per minute\\n   - Push at least 2 inches (5-6 cm) deep\\n\\n3. **Continue compressions**: Keep going without interruption until professional medical help arrives.",
-                            "summery": "summery",
+                            "summary": "summary",
                             "recommendedAction": "temp",
                             "confidence": 100.0,
                             "blogLinks": [
@@ -112,38 +112,8 @@ public class FirstAidController {
                         summary = "의식불명 환자 발견",
                         value = """
                             {
-                              "emergencyType": "Cardiac Arrest",
-                              "userMessage": "I found an unconscious person with no breathing. What should I do?"
-                            }
-                            """
-                    ),
-                    @ExampleObject(
-                        name = "출혈 상황",
-                        summary = "칼에 베인 상처",
-                        value = """
-                            {
-                              "emergencyType": "Severe Bleeding",
-                              "userMessage": "I cut myself with a knife and there's a lot of bleeding. How should I treat it?"
-                            }
-                            """
-                    ),
-                    @ExampleObject(
-                        name = "화상 상황",
-                        summary = "끓는 물에 데임",
-                        value = """
-                            {
-                              "emergencyType": "Burns",
-                              "userMessage": "I burned my hand with boiling water and blisters have formed. How should I treat it?"
-                            }
-                            """
-                    ),
-                    @ExampleObject(
-                        name = "질식 상황",
-                        summary = "음식물 기도 폐쇄",
-                        value = """
-                            {
-                              "emergencyType": "Choking",
-                              "userMessage": "Food is stuck in the throat and the person can't breathe. This is urgent!"
+                              "symptomType": "Cardiac Arrest",
+                              "symptomDetail": "I found an unconscious person with no breathing. What should I do?"
                             }
                             """
                     )
