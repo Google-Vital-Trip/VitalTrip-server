@@ -3,7 +3,9 @@ package com.vitaltrip.vitaltrip.config;
 import com.vitaltrip.vitaltrip.domain.auth.filter.FirstAidAuthenticationFilter;
 import com.vitaltrip.vitaltrip.domain.auth.filter.JwtAuthenticationFilter;
 import com.vitaltrip.vitaltrip.domain.auth.handler.SimpleOAuth2SuccessHandler;
+
 import java.util.Arrays;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -87,6 +89,9 @@ public class SecurityConfig {
                                 "/h2-console/**",
                                 "/favicon.ico",
                                 "/error"
+                        ).permitAll()
+                        .requestMatchers(
+                                "/api/location/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
