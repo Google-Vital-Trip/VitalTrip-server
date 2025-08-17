@@ -1,8 +1,7 @@
 package com.vitaltrip.vitaltrip.config;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -10,47 +9,23 @@ import org.springframework.web.client.RestClient;
 
 @Slf4j
 @Configuration
+@RequiredArgsConstructor
 public class RestClientConfig {
 
-    @Value("${gemini.api.base-url}")
-    private String geminiBaseUrl;
+    private final ClientHttpRequestInterceptor loggingInterceptor;
+    private final ClientHttpRequestInterceptor userAgentInterceptor;
+    private final ClientHttpRequestInterceptor errorHandlingInterceptor;
 
     @Bean
-    @Qualifier("geminiRestClient")
-    public RestClient geminiRestClient() {
+    public RestClient.Builder baseRestClientBuilder() {
         return RestClient.builder()
-            .baseUrl(geminiBaseUrl)
-            .requestInterceptor(loggingInterceptor())
-            .requestInterceptor(userAgentInterceptor())
-            .build();
+                .requestInterceptor(userAgentInterceptor)
+                .requestInterceptor(loggingInterceptor)
+                .requestInterceptor(errorHandlingInterceptor);
     }
 
     @Bean
-    @Qualifier("defaultRestClient")
-    public RestClient defaultRestClient() {
-        return RestClient.builder()
-            .requestInterceptor(loggingInterceptor())
-            .requestInterceptor(userAgentInterceptor())
-            .build();
-    }
-
-    private ClientHttpRequestInterceptor loggingInterceptor() {
-        return (request, body, execution) -> {
-            log.debug("RestClient Request: {} {}", request.getMethod(), request.getURI());
-
-            var response = execution.execute(request, body);
-
-            log.debug("RestClient Response: {} for {} {}",
-                response.getStatusCode(), request.getMethod(), request.getURI());
-
-            return response;
-        };
-    }
-
-    private ClientHttpRequestInterceptor userAgentInterceptor() {
-        return (request, body, execution) -> {
-            request.getHeaders().add("User-Agent", "VitalTrip/1.0.0 (Spring Boot)");
-            return execution.execute(request, body);
-        };
+    public RestClient defaultRestClient(RestClient.Builder baseRestClientBuilder) {
+        return baseRestClientBuilder.build();
     }
 }
