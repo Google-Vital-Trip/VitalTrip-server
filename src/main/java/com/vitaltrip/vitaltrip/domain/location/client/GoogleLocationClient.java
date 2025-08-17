@@ -45,7 +45,7 @@ public class GoogleLocationClient {
         return new GoogleTextSearchRequest(
                 keyword,
                 locationBias,
-                20,
+                15,
                 language,
                 true
         );
