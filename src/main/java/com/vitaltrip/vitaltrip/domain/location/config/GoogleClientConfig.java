@@ -9,7 +9,7 @@ import org.springframework.web.client.RestClient;
 
 @Configuration
 @RequiredArgsConstructor
-public class GoogleLocationClientConfig {
+public class GoogleClientConfig {
 
     @Value("${google.api.location.base-url}")
     private String googleLocationBaseUrl;
@@ -23,6 +23,15 @@ public class GoogleLocationClientConfig {
         return baseRestClientBuilder
                 .baseUrl(googleLocationBaseUrl)
                 .defaultHeader("Content-Type", "application/json")
+                .defaultHeader("X-Goog-Api-Key", googleLocationApiKey)
+                .build();
+    }
+
+    @Bean
+    @Qualifier("googlePhotoRestClient")
+    public RestClient googlePhotoRestClient(RestClient.Builder baseRestClientBuilder) {
+        return baseRestClientBuilder
+                .baseUrl(googleLocationBaseUrl)
                 .defaultHeader("X-Goog-Api-Key", googleLocationApiKey)
                 .build();
     }
