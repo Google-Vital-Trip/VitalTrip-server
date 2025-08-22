@@ -1,12 +1,14 @@
 package com.vitaltrip.vitaltrip.domain.location.service;
 
 import com.vitaltrip.vitaltrip.domain.location.client.GoogleLocationClient;
+import com.vitaltrip.vitaltrip.domain.location.client.GooglePhotoClient;
 import com.vitaltrip.vitaltrip.domain.location.dto.GoogleTextSearchResponse;
 import com.vitaltrip.vitaltrip.domain.location.dto.Location;
 import com.vitaltrip.vitaltrip.domain.location.dto.NearbyPlaceRequest;
 import com.vitaltrip.vitaltrip.domain.location.dto.NearbyPlaceResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -19,6 +21,10 @@ import java.util.stream.Collectors;
 public class LocationService {
 
     private final GoogleLocationClient googleLocationClient;
+    private final GooglePhotoClient googlePhotoClient;
+
+    @Value("${google.api.location.api-key}")
+    private String googleApiKey;
 
     public List<NearbyPlaceResponse> searchNearbyPlaces(NearbyPlaceRequest request) {
 
@@ -29,7 +35,6 @@ public class LocationService {
 
         return convertToNearbyPlaceResponse(response, request.location(), request.radius());
     }
-
 
     private String buildUniversalSearchQuery(String type) {
         return switch (type) {
@@ -103,6 +108,7 @@ public class LocationService {
 
         boolean openNow = extractOpenNowStatus(place);
         List<String> openingHours = extractOpeningHours(place);
+        String imageUrl = generateDirectImageUrl(place);
 
         return new NearbyPlaceResponse(
                 place.displayName() != null ? place.displayName().text() : "정보 없음",
@@ -113,8 +119,21 @@ public class LocationService {
                 Math.round(distance * 10.0) / 10.0,
                 openNow,
                 openingHours,
-                place.websiteUri()
+                place.websiteUri(),
+                imageUrl
         );
+    }
+
+    private String generateDirectImageUrl(GoogleTextSearchResponse.Place place) {
+        try {
+            if (place.photos() != null && !place.photos().isEmpty()) {
+                String photoName = place.photos().getFirst().name();
+                return googlePhotoClient.getPhotoUri(photoName);
+            }
+        } catch (Exception e) {
+            log.warn("Failed to generate image URL", e);
+        }
+        return null;
     }
 
     private boolean extractOpenNowStatus(GoogleTextSearchResponse.Place place) {
