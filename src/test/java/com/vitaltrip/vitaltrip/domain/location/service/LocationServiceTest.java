@@ -1,6 +1,7 @@
 package com.vitaltrip.vitaltrip.domain.location.service;
 
 import com.vitaltrip.vitaltrip.domain.location.client.GoogleLocationClient;
+import com.vitaltrip.vitaltrip.domain.location.client.GooglePhotoClient;
 import com.vitaltrip.vitaltrip.domain.location.dto.GoogleTextSearchResponse;
 import com.vitaltrip.vitaltrip.domain.location.dto.Location;
 import com.vitaltrip.vitaltrip.domain.location.dto.NearbyPlaceRequest;
@@ -26,6 +27,9 @@ class LocationServiceTest {
 
     @Mock
     private GoogleLocationClient googleLocationClient;
+
+    @Mock
+    private GooglePhotoClient googlePhotoClient;
 
     @InjectMocks
     private LocationService locationService;
@@ -112,7 +116,6 @@ class LocationServiceTest {
             assertThat(result.getFirst().name()).isEqualTo("서울대학교병원");
             assertThat(result).noneMatch(place -> place.name().contains("마사지"));
         }
-
     }
 
     @Nested
@@ -195,21 +198,81 @@ class LocationServiceTest {
         }
     }
 
+    @Nested
+    @DisplayName("이미지 URL 테스트")
+    class ImageUrlTest {
+
+        @Test
+        @DisplayName("사진이 있는 경우 이미지 URL이 생성되어야 한다")
+        void imageUrl_ShouldBeGenerated_WhenPhotosExist() {
+            given(googleLocationClient.textSearch(anyString(), any(Location.class), anyDouble(), anyString()))
+                    .willReturn(createMockResponseWithPhotos());
+            given(googlePhotoClient.getPhotoUri(anyString()))
+                    .willReturn("https://lh3.googleusercontent.com/test-image");
+
+            List<NearbyPlaceResponse> result = locationService.searchNearbyPlaces(testRequest);
+
+            assertThat(result).hasSize(1);
+            assertThat(result.getFirst().imageUrl()).isEqualTo("https://lh3.googleusercontent.com/test-image");
+        }
+
+        @Test
+        @DisplayName("사진이 없는 경우 이미지 URL이 null이어야 한다")
+        void imageUrl_ShouldBeNull_WhenNoPhotos() {
+            given(googleLocationClient.textSearch(anyString(), any(Location.class), anyDouble(), anyString()))
+                    .willReturn(createMockResponseWithHospitals());
+            // photos가 null이므로 GooglePhotoClient는 호출되지 않음
+
+            List<NearbyPlaceResponse> result = locationService.searchNearbyPlaces(testRequest);
+
+            assertThat(result).hasSize(2);
+            assertThat(result.get(0).imageUrl()).isNull();
+            assertThat(result.get(1).imageUrl()).isNull();
+        }
+
+        @Test
+        @DisplayName("GooglePhotoClient 에러 시 이미지 URL이 null이어야 한다")
+        void imageUrl_ShouldBeNull_WhenPhotoClientFails() {
+            given(googleLocationClient.textSearch(anyString(), any(Location.class), anyDouble(), anyString()))
+                    .willReturn(createMockResponseWithPhotos());
+            given(googlePhotoClient.getPhotoUri(anyString()))
+                    .willReturn(null);
+
+            List<NearbyPlaceResponse> result = locationService.searchNearbyPlaces(testRequest);
+
+            assertThat(result).hasSize(1);
+            assertThat(result.getFirst().imageUrl()).isNull();
+        }
+    }
+
     private GoogleTextSearchResponse createMockResponseWithHospitals() {
         GoogleTextSearchResponse.DisplayName displayName1 = new GoogleTextSearchResponse.DisplayName("서울대학교병원", "ko");
         GoogleTextSearchResponse.DisplayName displayName2 = new GoogleTextSearchResponse.DisplayName("세브란스병원", "ko");
 
         GoogleTextSearchResponse.Place place1 = new GoogleTextSearchResponse.Place(
                 displayName1, "서울시 종로구 대학로 101",
-                new Location(37.5796, 126.9968), "+82-2-2072-2114", null, "https://snuh.org"
+                new Location(37.5796, 126.9968), "+82-2-2072-2114", null, "https://snuh.org", null
         );
 
         GoogleTextSearchResponse.Place place2 = new GoogleTextSearchResponse.Place(
                 displayName2, "서울시 서대문구 연세로 50-1",
-                new Location(37.5626, 126.9397), "+82-2-2228-5800", null, "https://severance.healthcare"
+                new Location(37.5626, 126.9397), "+82-2-2228-5800", null, "https://severance.healthcare", null
         );
 
         return new GoogleTextSearchResponse(List.of(place1, place2));
+    }
+
+    private GoogleTextSearchResponse createMockResponseWithPhotos() {
+        GoogleTextSearchResponse.DisplayName displayName = new GoogleTextSearchResponse.DisplayName("사진있는병원", "ko");
+        GoogleTextSearchResponse.Photo photo = new GoogleTextSearchResponse.Photo(
+                "places/ChIJ.../photos/ATKogp...", 400, 400, null);
+
+        GoogleTextSearchResponse.Place place = new GoogleTextSearchResponse.Place(
+                displayName, "서울시 중구", new Location(37.5665, 126.9780),
+                null, null, null, List.of(photo)
+        );
+
+        return new GoogleTextSearchResponse(List.of(place));
     }
 
     private GoogleTextSearchResponse createMockResponseWithAnimalHospitals() {
@@ -217,10 +280,10 @@ class LocationServiceTest {
         GoogleTextSearchResponse.DisplayName animalHospital = new GoogleTextSearchResponse.DisplayName("강남 동물병원", "ko");
 
         GoogleTextSearchResponse.Place place1 = new GoogleTextSearchResponse.Place(
-                hospital, "서울시 종로구", new Location(37.5796, 126.9968), null, null, null
+                hospital, "서울시 종로구", new Location(37.5796, 126.9968), null, null, null, null
         );
         GoogleTextSearchResponse.Place place2 = new GoogleTextSearchResponse.Place(
-                animalHospital, "서울시 강남구", new Location(37.5000, 126.9000), null, null, null
+                animalHospital, "서울시 강남구", new Location(37.5000, 126.9000), null, null, null, null
         );
 
         return new GoogleTextSearchResponse(List.of(place1, place2));
@@ -231,10 +294,10 @@ class LocationServiceTest {
         GoogleTextSearchResponse.DisplayName massage = new GoogleTextSearchResponse.DisplayName("힐링 마사지", "ko");
 
         GoogleTextSearchResponse.Place place1 = new GoogleTextSearchResponse.Place(
-                hospital, "서울시 종로구", new Location(37.5796, 126.9968), null, null, null
+                hospital, "서울시 종로구", new Location(37.5796, 126.9968), null, null, null, null
         );
         GoogleTextSearchResponse.Place place2 = new GoogleTextSearchResponse.Place(
-                massage, "서울시 강남구", new Location(37.5000, 126.9000), null, null, null
+                massage, "서울시 강남구", new Location(37.5000, 126.9000), null, null, null, null
         );
 
         return new GoogleTextSearchResponse(List.of(place1, place2));
@@ -246,13 +309,13 @@ class LocationServiceTest {
         GoogleTextSearchResponse.DisplayName far = new GoogleTextSearchResponse.DisplayName("원거리 병원", "ko");
 
         GoogleTextSearchResponse.Place place1 = new GoogleTextSearchResponse.Place(
-                close, "서울시 중구", new Location(37.5666, 126.9781), null, null, null
+                close, "서울시 중구", new Location(37.5666, 126.9781), null, null, null, null
         );
         GoogleTextSearchResponse.Place place2 = new GoogleTextSearchResponse.Place(
-                medium, "서울시 종로구", new Location(37.5700, 126.9800), null, null, null
+                medium, "서울시 종로구", new Location(37.5700, 126.9800), null, null, null, null
         );
         GoogleTextSearchResponse.Place place3 = new GoogleTextSearchResponse.Place(
-                far, "부산시", new Location(35.1796, 129.0756), null, null, null
+                far, "부산시", new Location(35.1796, 129.0756), null, null, null, null
         );
 
         return new GoogleTextSearchResponse(List.of(place1, place2, place3));
@@ -264,13 +327,13 @@ class LocationServiceTest {
         GoogleTextSearchResponse.DisplayName medium = new GoogleTextSearchResponse.DisplayName("중간 거리 병원", "ko");
 
         GoogleTextSearchResponse.Place place1 = new GoogleTextSearchResponse.Place(
-                far, "서울시 강남구", new Location(37.5300, 126.9500), null, null, null
+                far, "서울시 강남구", new Location(37.5300, 126.9500), null, null, null, null
         );
         GoogleTextSearchResponse.Place place2 = new GoogleTextSearchResponse.Place(
-                close, "서울시 중구", new Location(37.5666, 126.9781), null, null, null
+                close, "서울시 중구", new Location(37.5666, 126.9781), null, null, null, null
         );
         GoogleTextSearchResponse.Place place3 = new GoogleTextSearchResponse.Place(
-                medium, "서울시 종로구", new Location(37.5700, 126.9800), null, null, null
+                medium, "서울시 종로구", new Location(37.5700, 126.9800), null, null, null, null
         );
 
         return new GoogleTextSearchResponse(List.of(place1, place2, place3));
@@ -286,7 +349,7 @@ class LocationServiceTest {
             GoogleTextSearchResponse.Place place = new GoogleTextSearchResponse.Place(
                     displayName, "서울시 주소" + i,
                     new Location(37.5665 + (i * 0.001), 126.9780 + (i * 0.001)),
-                    null, null, null
+                    null, null, null, null
             );
             places.add(place);
         }
@@ -303,7 +366,7 @@ class LocationServiceTest {
 
         GoogleTextSearchResponse.Place place = new GoogleTextSearchResponse.Place(
                 displayName, "서울시 중구", new Location(37.5665, 126.9780),
-                null, openingHours, null
+                null, openingHours, null, null
         );
 
         return new GoogleTextSearchResponse(List.of(place));
@@ -314,7 +377,7 @@ class LocationServiceTest {
 
         GoogleTextSearchResponse.Place place = new GoogleTextSearchResponse.Place(
                 displayName, "서울시 중구", new Location(37.5665, 126.9780),
-                null, null, null
+                null, null, null, null
         );
 
         return new GoogleTextSearchResponse(List.of(place));
