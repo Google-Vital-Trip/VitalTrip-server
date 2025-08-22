@@ -5,6 +5,7 @@ import com.vitaltrip.vitaltrip.common.exception.ErrorType;
 import com.vitaltrip.vitaltrip.domain.auth.dto.AuthDto;
 import com.vitaltrip.vitaltrip.domain.auth.util.JwtUtil;
 import com.vitaltrip.vitaltrip.domain.user.User;
+import com.vitaltrip.vitaltrip.domain.user.dto.UserInfoResponse;
 import com.vitaltrip.vitaltrip.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,15 +37,15 @@ public class AuthService {
         String encodedPassword = passwordEncoder.encode(request.password());
 
         User user = User.builder()
-            .email(request.email())
-            .name(request.name())
-            .passwordHash(encodedPassword)
-            .birthDate(request.birthDate())
-            .countryCode(request.countryCode())
-            .phoneNumber(request.phoneNumber())
-            .provider(User.AuthProvider.LOCAL)
-            .role(User.Role.USER)
-            .build();
+                .email(request.email())
+                .name(request.name())
+                .passwordHash(encodedPassword)
+                .birthDate(request.birthDate())
+                .countryCode(request.countryCode())
+                .phoneNumber(request.phoneNumber())
+                .provider(User.AuthProvider.LOCAL)
+                .role(User.Role.USER)
+                .build();
 
         userRepository.save(user);
     }
@@ -52,7 +53,7 @@ public class AuthService {
     public AuthDto.AuthResponse login(AuthDto.LoginRequest request) {
 
         User user = userRepository.findByEmail(request.email())
-            .orElseThrow(() -> new CustomException(ErrorType.RESOURCE_NOT_FOUND, "등록되지 않은 이메일입니다"));
+                .orElseThrow(() -> new CustomException(ErrorType.RESOURCE_NOT_FOUND, "등록되지 않은 이메일입니다"));
 
         if (user.getProvider() != User.AuthProvider.LOCAL) {
             throw new CustomException(ErrorType.INVALID_REQUEST, "소셜 로그인 사용자는 해당 방식으로 로그인해주세요");
@@ -75,7 +76,7 @@ public class AuthService {
 
         String userId = jwtUtil.getUserId(refreshToken);
         User user = userRepository.findById(Long.parseLong(userId))
-            .orElseThrow(() -> new CustomException(ErrorType.RESOURCE_NOT_FOUND, "사용자를 찾을 수 없습니다"));
+                .orElseThrow(() -> new CustomException(ErrorType.RESOURCE_NOT_FOUND, "사용자를 찾을 수 없습니다"));
 
         String newAccessToken = jwtUtil.generateAccessToken(user);
 
@@ -102,18 +103,6 @@ public class AuthService {
 
     }
 
-    @Transactional
-    public void updateProfile(User user, AuthDto.ProfileUpdateRequest request) {
-
-        user.updateProfile(
-            request.name(),
-            request.birthDate(),
-            request.countryCode(),
-            request.phoneNumber()
-        );
-
-    }
-
     public AuthDto.EmailCheckResponse checkEmailAvailability(String email) {
         boolean isAvailable = !userRepository.existsByEmail(email);
         return new AuthDto.EmailCheckResponse(isAvailable);
@@ -124,14 +113,14 @@ public class AuthService {
         String accessToken = jwtUtil.generateAccessToken(user);
         String refreshToken = jwtUtil.generateRefreshToken(user);
 
-        AuthDto.UserInfo userInfo = new AuthDto.UserInfo(
-            user.getId(),
-            user.getEmail(),
-            user.getName(),
-            user.getBirthDate(),
-            user.getCountryCode(),
-            user.getPhoneNumber(),
-            user.getProfileImageUrl()
+        UserInfoResponse userInfo = new UserInfoResponse(
+                user.getId(),
+                user.getEmail(),
+                user.getName(),
+                user.getBirthDate(),
+                user.getCountryCode(),
+                user.getPhoneNumber(),
+                user.getProfileImageUrl()
         );
 
         return new AuthDto.AuthResponse(accessToken, refreshToken, userInfo);
