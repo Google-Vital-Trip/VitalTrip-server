@@ -4,13 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.verify;
 
-import com.vitaltrip.vitaltrip.domain.user.User;
-import com.vitaltrip.vitaltrip.domain.user.dto.ProfileUpdateRequest;
-import com.vitaltrip.vitaltrip.domain.user.dto.UserInfoResponse;
-import com.vitaltrip.vitaltrip.domain.user.repository.UserRepository;
+import com.vitaltrip.vitaltrip.user.domain.User;
+import com.vitaltrip.vitaltrip.user.dto.ProfileUpdateRequest;
+import com.vitaltrip.vitaltrip.user.dto.UserInfoResponse;
+import com.vitaltrip.vitaltrip.user.repository.UserRepository;
 
 import java.time.LocalDate;
 
+import com.vitaltrip.vitaltrip.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

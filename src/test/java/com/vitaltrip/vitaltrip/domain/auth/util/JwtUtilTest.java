@@ -3,8 +3,8 @@ package com.vitaltrip.vitaltrip.domain.auth.util;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.vitaltrip.vitaltrip.domain.auth.util.JwtUtil;
-import com.vitaltrip.vitaltrip.domain.user.User;
+import com.vitaltrip.vitaltrip.auth.util.JwtUtil;
+import com.vitaltrip.vitaltrip.user.domain.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import java.util.Date;
