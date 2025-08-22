@@ -1,4 +1,4 @@
-package com.vitaltrip.vitaltrip.domain;
+package com.vitaltrip.vitaltrip.common;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
