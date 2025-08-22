@@ -8,7 +8,6 @@ import com.vitaltrip.vitaltrip.domain.location.dto.NearbyPlaceRequest;
 import com.vitaltrip.vitaltrip.domain.location.dto.NearbyPlaceResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -22,9 +21,6 @@ public class LocationService {
 
     private final GoogleLocationClient googleLocationClient;
     private final GooglePhotoClient googlePhotoClient;
-
-    @Value("${google.api.location.api-key}")
-    private String googleApiKey;
 
     public List<NearbyPlaceResponse> searchNearbyPlaces(NearbyPlaceRequest request) {
 
