@@ -11,6 +11,7 @@ public record NearbyPlaceResponse(
         Double distance,
         Boolean openNow,
         List<String> openingHours,
-        String websiteUrl
+        String websiteUrl,
+        String imageUrl
 ) {
 }
