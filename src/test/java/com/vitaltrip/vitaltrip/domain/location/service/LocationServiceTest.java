@@ -1,11 +1,12 @@
 package com.vitaltrip.vitaltrip.domain.location.service;
 
-import com.vitaltrip.vitaltrip.domain.location.client.GoogleLocationClient;
-import com.vitaltrip.vitaltrip.domain.location.client.GooglePhotoClient;
-import com.vitaltrip.vitaltrip.domain.location.dto.GoogleTextSearchResponse;
-import com.vitaltrip.vitaltrip.domain.location.dto.Location;
-import com.vitaltrip.vitaltrip.domain.location.dto.NearbyPlaceRequest;
-import com.vitaltrip.vitaltrip.domain.location.dto.NearbyPlaceResponse;
+import com.vitaltrip.vitaltrip.location.client.GoogleLocationClient;
+import com.vitaltrip.vitaltrip.location.client.GooglePhotoClient;
+import com.vitaltrip.vitaltrip.location.dto.GoogleTextSearchResponse;
+import com.vitaltrip.vitaltrip.location.dto.Location;
+import com.vitaltrip.vitaltrip.location.dto.NearbyPlaceRequest;
+import com.vitaltrip.vitaltrip.location.dto.NearbyPlaceResponse;
+import com.vitaltrip.vitaltrip.location.service.LocationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

@@ -1,8 +1,8 @@
 package com.vitaltrip.vitaltrip.config;
 
-import com.vitaltrip.vitaltrip.domain.auth.filter.FirstAidAuthenticationFilter;
-import com.vitaltrip.vitaltrip.domain.auth.filter.JwtAuthenticationFilter;
-import com.vitaltrip.vitaltrip.domain.auth.handler.SimpleOAuth2SuccessHandler;
+import com.vitaltrip.vitaltrip.auth.filter.FirstAidAuthenticationFilter;
+import com.vitaltrip.vitaltrip.auth.filter.JwtAuthenticationFilter;
+import com.vitaltrip.vitaltrip.auth.handler.SimpleOAuth2SuccessHandler;
 
 import java.util.Arrays;
 

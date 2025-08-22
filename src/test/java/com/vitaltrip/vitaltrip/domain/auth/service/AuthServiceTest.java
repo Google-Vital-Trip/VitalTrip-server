@@ -12,12 +12,13 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
+import com.vitaltrip.vitaltrip.auth.service.AuthService;
 import com.vitaltrip.vitaltrip.common.exception.CustomException;
 import com.vitaltrip.vitaltrip.common.exception.ErrorType;
-import com.vitaltrip.vitaltrip.domain.auth.dto.AuthDto;
-import com.vitaltrip.vitaltrip.domain.auth.util.JwtUtil;
-import com.vitaltrip.vitaltrip.domain.user.User;
-import com.vitaltrip.vitaltrip.domain.user.repository.UserRepository;
+import com.vitaltrip.vitaltrip.auth.dto.AuthDto;
+import com.vitaltrip.vitaltrip.auth.util.JwtUtil;
+import com.vitaltrip.vitaltrip.user.domain.User;
+import com.vitaltrip.vitaltrip.user.repository.UserRepository;
 import java.time.LocalDate;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
