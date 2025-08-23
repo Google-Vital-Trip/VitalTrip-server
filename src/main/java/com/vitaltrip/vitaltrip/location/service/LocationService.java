@@ -1,6 +1,6 @@
 package com.vitaltrip.vitaltrip.location.service;
 
-import com.vitaltrip.vitaltrip.location.client.GoogleLocationClient;
+import com.vitaltrip.vitaltrip.location.client.FakeGoogleLocationClient;
 import com.vitaltrip.vitaltrip.location.dto.GoogleTextSearchResponse;
 import com.vitaltrip.vitaltrip.location.dto.Location;
 import com.vitaltrip.vitaltrip.location.dto.NearbyPlaceRequest;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class LocationService {
 
-    private final GoogleLocationClient googleLocationClient;
+    private final FakeGoogleLocationClient googleLocationClient;
 
     public List<NearbyPlaceResponse> searchNearbyPlaces(NearbyPlaceRequest request) {
 
