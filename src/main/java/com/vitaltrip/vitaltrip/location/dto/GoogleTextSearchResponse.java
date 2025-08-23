@@ -16,8 +16,7 @@ public record GoogleTextSearchResponse(
             Location location,
             String nationalPhoneNumber,
             CurrentOpeningHours currentOpeningHours,
-            String websiteUri,
-            List<Photo> photos
+            String websiteUri
     ) {
     }
 
@@ -48,23 +47,6 @@ public record GoogleTextSearchResponse(
             Integer hour,
             Integer minute,
             Integer day  // 0=일요일, 1=월요일, ...
-    ) {
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public record Photo(
-            String name,
-            Integer widthPx,
-            Integer heightPx,
-            List<AuthorAttribution> authorAttributions
-    ) {
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public record AuthorAttribution(
-            String displayName,
-            String uri,
-            String photoUri
     ) {
     }
 }
