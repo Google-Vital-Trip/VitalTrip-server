@@ -1,7 +1,6 @@
 package com.vitaltrip.vitaltrip.location.service;
 
 import com.vitaltrip.vitaltrip.location.client.GoogleLocationClient;
-import com.vitaltrip.vitaltrip.location.client.GooglePhotoClient;
 import com.vitaltrip.vitaltrip.location.dto.GoogleTextSearchResponse;
 import com.vitaltrip.vitaltrip.location.dto.Location;
 import com.vitaltrip.vitaltrip.location.dto.NearbyPlaceRequest;
@@ -20,7 +19,6 @@ import java.util.stream.Collectors;
 public class LocationService {
 
     private final GoogleLocationClient googleLocationClient;
-    private final GooglePhotoClient googlePhotoClient;
 
     public List<NearbyPlaceResponse> searchNearbyPlaces(NearbyPlaceRequest request) {
 
@@ -104,7 +102,6 @@ public class LocationService {
 
         boolean openNow = extractOpenNowStatus(place);
         List<String> openingHours = extractOpeningHours(place);
-        String imageUrl = generateDirectImageUrl(place);
 
         return new NearbyPlaceResponse(
                 place.displayName() != null ? place.displayName().text() : "정보 없음",
@@ -115,21 +112,8 @@ public class LocationService {
                 Math.round(distance * 10.0) / 10.0,
                 openNow,
                 openingHours,
-                place.websiteUri(),
-                imageUrl
+                place.websiteUri()
         );
-    }
-
-    private String generateDirectImageUrl(GoogleTextSearchResponse.Place place) {
-        try {
-            if (place.photos() != null && !place.photos().isEmpty()) {
-                String photoName = place.photos().getFirst().name();
-                return googlePhotoClient.getPhotoUri(photoName);
-            }
-        } catch (Exception e) {
-            log.warn("Failed to generate image URL", e);
-        }
-        return null;
     }
 
     private boolean extractOpenNowStatus(GoogleTextSearchResponse.Place place) {

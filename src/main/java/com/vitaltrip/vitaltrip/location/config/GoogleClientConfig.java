@@ -27,12 +27,4 @@ public class GoogleClientConfig {
                 .build();
     }
 
-    @Bean
-    @Qualifier("googlePhotoRestClient")
-    public RestClient googlePhotoRestClient(RestClient.Builder baseRestClientBuilder) {
-        return baseRestClientBuilder
-                .baseUrl(googleLocationBaseUrl)
-                .defaultHeader("X-Goog-Api-Key", googleLocationApiKey)
-                .build();
-    }
 }
