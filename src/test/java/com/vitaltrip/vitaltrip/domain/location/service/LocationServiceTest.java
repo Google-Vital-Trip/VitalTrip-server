@@ -1,6 +1,6 @@
 package com.vitaltrip.vitaltrip.domain.location.service;
 
-import com.vitaltrip.vitaltrip.location.client.GoogleLocationClient;
+import com.vitaltrip.vitaltrip.location.client.FakeGoogleLocationClient;
 import com.vitaltrip.vitaltrip.location.dto.GoogleTextSearchResponse;
 import com.vitaltrip.vitaltrip.location.dto.Location;
 import com.vitaltrip.vitaltrip.location.dto.NearbyPlaceRequest;
@@ -26,7 +26,7 @@ import static org.mockito.BDDMockito.given;
 class LocationServiceTest {
 
     @Mock
-    private GoogleLocationClient googleLocationClient;
+    private FakeGoogleLocationClient googleLocationClient;
 
     @InjectMocks
     private LocationService locationService;
