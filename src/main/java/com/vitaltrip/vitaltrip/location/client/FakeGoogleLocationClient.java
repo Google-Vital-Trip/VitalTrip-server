@@ -13,10 +13,15 @@ import java.util.List;
 public class FakeGoogleLocationClient {
 
     public GoogleTextSearchResponse textSearch(String keyword, Location location, Double radiusMeters, String language) {
-        log.info("FakeGoogleLocationClient - textSearch called with keyword: {}, location: {}, radius: {}, language: {}",
+        log.info("FakeGoogleLocationClient - keyword: {}, location: {}, radius: {}, language: {}",
                 keyword, location, radiusMeters, language);
 
-        return createFakeHospitalResponse();
+        return switch (keyword) {
+            case "hospital emergency room medical center" -> createHospitalList();
+            case "pharmacy" -> createPharmacyList();
+            case "emergency room emergency department" -> createEmergencyList();
+            default -> throw new IllegalArgumentException("Unsupported keyword: " + keyword);
+        };
     }
 
     GoogleTextSearchRequest createRequestBody(String keyword, Location location, Double radiusMeters, String language) {
@@ -24,115 +29,186 @@ public class FakeGoogleLocationClient {
                 new GoogleTextSearchRequest.Circle(location, radiusMeters)
         );
 
-        return new GoogleTextSearchRequest(
-                keyword,
-                locationBias,
-                15,
-                language,
-                true
-        );
+        return new GoogleTextSearchRequest(keyword, locationBias, 15, language, true);
     }
 
-    private GoogleTextSearchResponse createFakeHospitalResponse() {
+    private GoogleTextSearchResponse createHospitalList() {
         List<GoogleTextSearchResponse.Place> hospitals = List.of(
-                // 기준점 (서울역) 근처: 37.5665, 126.9780
+                // 병원 15개
+                createPlace("서울대학교병원", "서울특별시 종로구 대학로 101",
+                        new Location(37.5796, 126.9968), "+82-2-2072-2114",
+                        createOpeningHours(true, "일반병원"), "https://www.snuh.org"),
 
-                // 1. 서울역 바로 근처 (500m 내)
-                createHospital("서울역 응급의료센터", "서울특별시 중구 한강대로 405",
-                        new Location(37.5661, 126.9755), "+82-2-1588-7119", true, "24시간"),
+                createPlace("세브란스병원", "서울특별시 서대문구 연세로 50-1",
+                        new Location(37.5626, 126.9397), "+82-2-2228-5800",
+                        createOpeningHours(true, "일반병원"), "https://www.severance.healthcare"),
 
-                // 2. 명동 방향 (1km)
-                createHospital("중구보건소 부설 의료원", "서울특별시 중구 다산로 117",
-                        new Location(37.5640, 126.9850), "+82-2-2266-1471", true, "일반"),
+                createPlace("삼성서울병원", "서울특별시 강남구 일원로 81",
+                        new Location(37.4885, 127.0854), "+82-2-3410-2114",
+                        createOpeningHours(true, "일반병원"), "https://www.samsunghospital.com"),
 
-                // 3. 시청 방향 (1.5km)
-                createHospital("서울시립 중랑의료원", "서울특별시 중구 세종대로 110",
-                        new Location(37.5663, 126.9779), "+82-2-2120-3114", true, "응급실"),
+                createPlace("서울아산병원", "서울특별시 송파구 올림픽로43길 88",
+                        new Location(37.5262, 127.1085), "+82-2-3010-3000",
+                        createOpeningHours(true, "24시간"), "https://www.amc.seoul.kr"),
 
-                // 4. 남대문 방향 (1km)
-                createHospital("남대문 종합병원", "서울특별시 중구 회현동1가 100-1",
-                        new Location(37.5584, 126.9756), "+82-2-752-0081", true, "일반"),
+                createPlace("고려대학교의료원", "서울특별시 성북구 고려대로 73",
+                        new Location(37.5906, 127.0270), "+82-2-920-5114",
+                        createOpeningHours(true, "일반병원"), "https://www.kumc.or.kr"),
 
-                // 5. 종로 방향 (2km)
-                createHospital("종로구 보건의료원", "서울특별시 종로구 종로 1",
-                        new Location(37.5704, 126.9826), "+82-2-2148-9000", true, "24시간"),
+                createPlace("한양대학교병원", "서울특별시 성동구 왕십리로 222",
+                        new Location(37.5583, 127.0436), "+82-2-2290-8114",
+                        createOpeningHours(true, "일반병원"), "https://seoul.hyumc.com"),
 
-                // 6. 마포 방향 (3km)
-                createHospital("서울역삼성병원", "서울특별시 마포구 마포대로 53",
-                        new Location(37.5449, 126.9516), "+82-2-2077-7000", true, "종합"),
+                createPlace("중앙대학교병원", "서울특별시 동작구 흑석로 102",
+                        new Location(37.5038, 126.9574), "+82-2-6299-1114",
+                        createOpeningHours(true, "일반병원"), "https://www.caumc.or.kr"),
 
-                // 7. 용산 방향 (2.5km)
-                createHospital("용산구민의료원", "서울특별시 용산구 이촌로 177",
-                        new Location(37.5347, 126.9678), "+82-2-2199-7000", true, "일반"),
+                createPlace("경희대학교병원", "서울특별시 동대문구 경희대로 23",
+                        new Location(37.5945, 127.0516), "+82-2-958-8114",
+                        createOpeningHours(true, "일반병원"), "https://www.khmc.or.kr"),
 
-                // 8. 홍대 방향 (4km)
-                createHospital("홍대 세브란스병원", "서울특별시 마포구 양화로 55",
-                        new Location(37.5510, 126.9227), "+82-2-312-0065", true, "응급실"),
+                createPlace("이대서울병원", "서울특별시 서대문구 신촌로 260",
+                        new Location(37.5564, 126.9365), "+82-2-6986-1616",
+                        createOpeningHours(true, "일반병원"), "https://seoul.eumc.ac.kr"),
 
-                // 9. 강남 방향 (4.5km)
-                createHospital("한강성심병원 서울역점", "서울특별시 영등포구 여의대로 10",
-                        new Location(37.5219, 126.9245), "+82-2-2639-5000", true, "종합"),
+                createPlace("강남세브란스병원", "서울특별시 강남구 언주로 211",
+                        new Location(37.5193, 127.0473), "+82-2-2019-3000",
+                        createOpeningHours(true, "24시간"), "https://gs.iseverance.com"),
 
-                // 10. 동대문 방향 (3.5km)
-                createHospital("동대문구 보건의료원", "서울특별시 동대문구 천호대로 145",
-                        new Location(37.5844, 127.0139), "+82-2-2127-4500", true, "24시간"),
+                createPlace("서울성모병원", "서울특별시 서초구 반포대로 222",
+                        new Location(37.5016, 126.9990), "+82-2-2258-5776",
+                        createOpeningHours(true, "일반병원"), "https://www.cmcseoul.or.kr"),
 
-                // 11. 성동 방향 (3km)
-                createHospital("성동구민 종합병원", "서울특별시 성동구 왕십리로 15",
-                        new Location(37.5635, 127.0286), "+82-2-2299-1114", true, "일반"),
+                createPlace("분당서울대병원", "경기도 성남시 분당구 구미로 173번길 82",
+                        new Location(37.3497, 127.1180), "+82-31-787-7114",
+                        createOpeningHours(true, "일반병원"), "https://www.snubh.org"),
 
-                // 12. 서대문 방향 (3km)
-                createHospital("신촌 세브란스병원 분원", "서울특별시 서대문구 연세로 134",
-                        new Location(37.5590, 126.9368), "+82-2-393-4114", true, "응급실"),
+                createPlace("국립중앙의료원", "서울특별시 중구 을지로 245",
+                        new Location(37.5651, 126.9918), "+82-2-2260-7114",
+                        createOpeningHours(true, "24시간"), "https://www.nmc.or.kr"),
 
-                // 13. 영등포 방향 (4km)
-                createHospital("영등포성모병원", "서울특별시 영등포구 여의도동 62",
-                        new Location(37.5185, 126.9366), "+82-2-3779-1000", true, "종합"),
+                createPlace("보라매병원", "서울특별시 동작구 보라매로5길 20",
+                        new Location(37.4937, 126.9246), "+82-2-870-2114",
+                        createOpeningHours(true, "일반병원"), "https://www.boramae.seoul.kr"),
 
-                // 14. 광화문 방향 (2km)
-                createHospital("서울대학교병원 분원", "서울특별시 종로구 대학로 28",
-                        new Location(37.5758, 126.9768), "+82-2-2072-0505", true, "24시간"),
-
-                // 15. 이태원 방향 (3.5km)
-                createHospital("용산 국제병원", "서울특별시 용산구 이태원로 112",
-                        new Location(37.5349, 126.9947), "+82-2-797-1004", true, "응급실")
+                createPlace("서울적십자병원", "서울특별시 종로구 새문안로 90",
+                        new Location(37.5714, 126.9683), "+82-2-2002-8000",
+                        createOpeningHours(true, "일반병원"), "https://www.redcross.ac.kr")
         );
 
         return new GoogleTextSearchResponse(hospitals);
     }
 
-    private GoogleTextSearchResponse.Place createHospital(String name, String address,
-                                                          Location location, String phone, boolean isOpen, String type) {
+    private GoogleTextSearchResponse createPharmacyList() {
+        List<GoogleTextSearchResponse.Place> pharmacies = List.of(
+                // 약국 10개
+                createPlace("서울역 24시 온누리약국", "서울특별시 중구 한강대로 405",
+                        new Location(37.5665, 126.9780), "+82-2-318-7700",
+                        createOpeningHours(true, "24시간"), "https://pharmacy1.co.kr"),
 
+                createPlace("명동 참약국", "서울특별시 중구 명동길 26",
+                        new Location(37.5636, 126.9834), "+82-2-771-5588",
+                        createOpeningHours(true, "일반약국"), "https://pharmacy2.co.kr"),
+
+                createPlace("강남역 24시 약국", "서울특별시 강남구 강남대로 390",
+                        new Location(37.4979, 127.0276), "+82-2-538-1004",
+                        createOpeningHours(true, "24시간"), "https://pharmacy3.co.kr"),
+
+                createPlace("홍대입구 청춘약국", "서울특별시 마포구 양화로 160",
+                        new Location(37.5563, 126.9236), "+82-2-322-8800",
+                        createOpeningHours(true, "야간약국"), "https://pharmacy4.co.kr"),
+
+                createPlace("종로 삼성약국", "서울특별시 종로구 종로 47",
+                        new Location(37.5704, 126.9826), "+82-2-2148-7700",
+                        createOpeningHours(true, "일반약국"), "https://pharmacy5.co.kr"),
+
+                createPlace("신촌 건강드림약국", "서울특별시 서대문구 연세로 134",
+                        new Location(37.5590, 126.9368), "+82-2-393-2200",
+                        createOpeningHours(true, "야간약국"), "https://pharmacy6.co.kr"),
+
+                createPlace("잠실 온누리약국", "서울특별시 송파구 올림픽로 300",
+                        new Location(37.5133, 127.1028), "+82-2-2147-1100",
+                        createOpeningHours(true, "일반약국"), "https://pharmacy7.co.kr"),
+
+                createPlace("이태원 글로벌약국", "서울특별시 용산구 이태원로 200",
+                        new Location(37.5349, 126.9947), "+82-2-797-5566",
+                        createOpeningHours(true, "야간약국"), "https://pharmacy8.co.kr"),
+
+                createPlace("건대입구 365약국", "서울특별시 광진구 능동로 120",
+                        new Location(37.5403, 127.0701), "+82-2-456-7788",
+                        createOpeningHours(true, "24시간"), "https://pharmacy9.co.kr"),
+
+                createPlace("영등포 24시 약국", "서울특별시 영등포구 영등포로 160",
+                        new Location(37.5185, 126.9085), "+82-2-2679-3300",
+                        createOpeningHours(true, "24시간"), "https://pharmacy10.co.kr")
+        );
+
+        return new GoogleTextSearchResponse(pharmacies);
+    }
+
+    private GoogleTextSearchResponse createEmergencyList() {
+        List<GoogleTextSearchResponse.Place> emergencyRooms = List.of(
+                // 응급실 7개 (모두 24시간)
+                createPlace("서울대병원 응급의료센터", "서울특별시 종로구 대학로 101",
+                        new Location(37.5796, 126.9968), "+82-2-2072-1339",
+                        createOpeningHours(true, "24시간"), "https://www.snuh.org/emergency"),
+
+                createPlace("아산병원 응급의료센터", "서울특별시 송파구 올림픽로43길 88",
+                        new Location(37.5262, 127.1085), "+82-2-3010-1339",
+                        createOpeningHours(true, "24시간"), "https://www.amc.seoul.kr/emergency"),
+
+                createPlace("삼성서울병원 응급실", "서울특별시 강남구 일원로 81",
+                        new Location(37.4885, 127.0854), "+82-2-3410-1339",
+                        createOpeningHours(true, "24시간"), "https://www.samsunghospital.com/emergency"),
+
+                createPlace("세브란스 응급의료센터", "서울특별시 서대문구 연세로 50-1",
+                        new Location(37.5626, 126.9397), "+82-2-2228-1339",
+                        createOpeningHours(true, "24시간"), "https://www.severance.healthcare/emergency"),
+
+                createPlace("강남세브란스 응급실", "서울특별시 강남구 언주로 211",
+                        new Location(37.5193, 127.0473), "+82-2-2019-1339",
+                        createOpeningHours(true, "24시간"), "https://gs.iseverance.com/emergency"),
+
+                createPlace("국립중앙의료원 응급의료센터", "서울특별시 중구 을지로 245",
+                        new Location(37.5651, 126.9918), "+82-2-2260-1339",
+                        createOpeningHours(true, "24시간"), "https://www.nmc.or.kr/emergency"),
+
+                createPlace("한양대병원 응급의료센터", "서울특별시 성동구 왕십리로 222",
+                        new Location(37.5583, 127.0436), "+82-2-2290-1339",
+                        createOpeningHours(true, "24시간"), "https://seoul.hyumc.com/emergency")
+        );
+
+        return new GoogleTextSearchResponse(emergencyRooms);
+    }
+
+    private GoogleTextSearchResponse.Place createPlace(String name, String address, Location location,
+                                                       String phone, GoogleTextSearchResponse.CurrentOpeningHours openingHours,
+                                                       String websiteUrl) {
         GoogleTextSearchResponse.DisplayName displayName = new GoogleTextSearchResponse.DisplayName(name, "ko");
+        return new GoogleTextSearchResponse.Place(displayName, address, location, phone, openingHours, websiteUrl);
+    }
 
+    private GoogleTextSearchResponse.CurrentOpeningHours createOpeningHours(boolean isOpen, String type) {
         List<String> weeklyHours = switch (type) {
             case "24시간" -> List.of(
                     "월요일: 24시간 영업", "화요일: 24시간 영업", "수요일: 24시간 영업",
                     "목요일: 24시간 영업", "금요일: 24시간 영업", "토요일: 24시간 영업", "일요일: 24시간 영업"
             );
-            case "응급실" -> List.of(
-                    "월요일: 오전 9:00~오후 10:00", "화요일: 오전 9:00~오후 10:00", "수요일: 오전 9:00~오후 10:00",
-                    "목요일: 오전 9:00~오후 10:00", "금요일: 오전 9:00~오후 10:00", "토요일: 오전 9:00~오후 6:00", "일요일: 오전 10:00~오후 4:00"
+            case "일반병원" -> List.of(
+                    "월요일: 오전 8:30~오후 5:30", "화요일: 오전 8:30~오후 5:30", "수요일: 오전 8:30~오후 5:30",
+                    "목요일: 오전 8:30~오후 5:30", "금요일: 오전 8:30~오후 5:30", "토요일: 오전 8:30~오후 12:30", "일요일: 휴무"
             );
-            case "종합" -> List.of(
-                    "월요일: 오전 8:00~오후 6:00", "화요일: 오전 8:00~오후 6:00", "수요일: 오전 8:00~오후 6:00",
-                    "목요일: 오전 8:00~오후 6:00", "금요일: 오전 8:00~오후 6:00", "토요일: 오전 8:00~오후 1:00", "일요일: 휴무"
+            case "일반약국" -> List.of(
+                    "월요일: 오전 9:00~오후 8:00", "화요일: 오전 9:00~오후 8:00", "수요일: 오전 9:00~오후 8:00",
+                    "목요일: 오전 9:00~오후 8:00", "금요일: 오전 9:00~오후 8:00", "토요일: 오전 9:00~오후 6:00", "일요일: 휴무"
             );
-            default -> List.of( // "일반"
-                    "월요일: 오전 9:00~오후 6:00", "화요일: 오전 9:00~오후 6:00", "수요일: 오전 9:00~오후 6:00",
-                    "목요일: 오전 9:00~오후 6:00", "금요일: 오전 9:00~오후 6:00", "토요일: 오전 9:00~오후 1:00", "일요일: 휴무"
+            case "야간약국" -> List.of(
+                    "월요일: 오전 9:00~오후 11:00", "화요일: 오전 9:00~오후 11:00", "수요일: 오전 9:00~오후 11:00",
+                    "목요일: 오전 9:00~오후 11:00", "금요일: 오전 9:00~오후 11:00", "토요일: 오전 9:00~오후 9:00", "일요일: 오전 10:00~오후 6:00"
             );
+            default -> List.of("운영시간 정보 없음");
         };
 
-        GoogleTextSearchResponse.CurrentOpeningHours openingHours = new GoogleTextSearchResponse.CurrentOpeningHours(
-                isOpen, null, weeklyHours
-        );
-
-        String websiteUrl = "https://hospital" + Math.abs(name.hashCode()) + ".co.kr";
-
-        return new GoogleTextSearchResponse.Place(
-                displayName, address, location, phone, openingHours, websiteUrl
-        );
+        return new GoogleTextSearchResponse.CurrentOpeningHours(isOpen, null, weeklyHours);
     }
 }
