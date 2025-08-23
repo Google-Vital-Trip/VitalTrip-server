@@ -80,8 +80,7 @@ public interface LocationControllerDocs {
                                                     "월요일: 오전 8:30~오후 5:30",
                                                     "화요일: 오전 8:30~오후 5:30"
                                                   ],
-                                                  "websiteUrl": "https://www.snuh.org",
-                                                  "imageUrl": "https://lh3.googleusercontent.com/place-photos/AJnk2cwMKKD6SkMw2CsdlgK_kSESufKPejnz1SGbLVJfoAbZvPo4tdtCVqf6aDAV7-iHL5W8Ls3XRL3gHr7RUUPkPppY19IUUqOkjV_eG4gNEZoyKLttZLUGyT9vavbqzhVO9gVmBD-Kkn2cr0HYMe8=s400"
+                                                  "websiteUrl": "https://www.snuh.org"
                                                 },
                                                 {
                                                   "name": "세브란스병원",
@@ -94,8 +93,7 @@ public interface LocationControllerDocs {
                                                   "openingHours": [
                                                     "월요일: 오전 8:00~오후 5:00"
                                                   ],
-                                                  "websiteUrl": "https://www.severance.healthcare",
-                                                  "imageUrl": null
+                                                  "websiteUrl": "https://www.severance.healthcare"
                                                 }
                                               ]
                                             }
