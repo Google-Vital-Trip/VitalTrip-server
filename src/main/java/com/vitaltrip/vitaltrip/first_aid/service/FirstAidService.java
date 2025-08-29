@@ -1,8 +1,14 @@
 package com.vitaltrip.vitaltrip.first_aid.service;
 
 import com.vitaltrip.vitaltrip.ai.client.GeminiClient;
+import com.vitaltrip.vitaltrip.first_aid.domain.EmergencySymptomType;
 import com.vitaltrip.vitaltrip.first_aid.dto.EmergencyChatAdviceRequest;
 import com.vitaltrip.vitaltrip.first_aid.dto.EmergencyChatAdviceResponse;
+import com.vitaltrip.vitaltrip.first_aid.dto.GeminiParsedResponse;
+import com.vitaltrip.vitaltrip.location.client.BigDataCloudClient;
+import com.vitaltrip.vitaltrip.location.dto.BigDataCloudResponse;
+import com.vitaltrip.vitaltrip.location.dto.EmergencyContact;
+import com.vitaltrip.vitaltrip.location.service.EmergencyContactService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,27 +20,43 @@ import org.springframework.stereotype.Service;
 public class FirstAidService {
 
     private final GeminiClient geminiClient;
+    private final PromptService promptService;
+    private final AiResponseParser aiResponseParser;
+    private final BigDataCloudClient bigDataCloudClient;
+    private final EmergencyContactService emergencyContactService;
 
     public EmergencyChatAdviceResponse generateEmergencyAdvice(EmergencyChatAdviceRequest request) {
-        String prompt = createEmergencyPrompt(request.symptomType(), request.symptomDetail());
-        String advice = geminiClient.generateContent(prompt);
 
-        // todo - advice를 위한 프롬프트 고도화, confidence 계산식, 추천 블로그 선택 알고리즘
-        return EmergencyChatAdviceResponse.from(advice, "summary", "temp", 100.0,
-            List.of("https://www.eunwoo-levi.blog/"));
+        BigDataCloudResponse locationResponse = bigDataCloudClient.reverseGeocode(
+            request.latitude(), request.longitude());
+        EmergencyContact emergencyContact = emergencyContactService.getEmergencyContact(
+            locationResponse.countryCode());
+
+        String prompt = promptService.buildPrompt(request.symptomType(), request.symptomDetail());
+        String aiResponse = geminiClient.generateContent(prompt);
+
+        GeminiParsedResponse parsedResponse = aiResponseParser.parseResponse(aiResponse);
+
+        Integer confidence = calculateConfidence(parsedResponse.content());
+        List<String> blogLinks = getBlogLink(request.symptomType());
+
+        return EmergencyChatAdviceResponse.of(
+            parsedResponse.content(),
+            parsedResponse.summary(),
+            parsedResponse.recommendedAction(),
+            emergencyContact,
+            parsedResponse.disclaimer(),
+            confidence,
+            blogLinks
+        );
     }
 
-    // 임시 프롬프트 - 차후 응급처치 메뉴얼 제공 알고리즘 수정 예정
-    private String createEmergencyPrompt(String emergencyType, String userMessage) {
-        return String.format("""
-            You are an emergency medical expert. Please provide assistance for the following emergency situation:
-            
-            Symptom Type: %s
-            Symptom Detail: %s
-            
-            Please provide concise and clear instructions on what actions should be taken immediately.
-            Since this is a life-related emergency situation, please provide only accurate information.
-            """, emergencyType, userMessage);
+    private Integer calculateConfidence(String content) {
+        return 100;
+    }
+
+    private List<String> getBlogLink(EmergencySymptomType type) {
+        return List.of("https://www.eunwoo-levi.blog/");
     }
 
 }
