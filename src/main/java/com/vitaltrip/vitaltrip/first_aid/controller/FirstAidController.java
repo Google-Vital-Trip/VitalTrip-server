@@ -72,19 +72,19 @@ public class FirstAidController implements FirstAidControllerDocs {
     }
 
     public EmergencyChatAdviceResponse createDemoResponse() {
-        String content = "Move away from the heat source immediately\n" +
-            "Remove any hot clothing or jewelry carefully\n" +
-            "Cool the burn with running cold water for 10-15 minutes\n" +
-            "Do not use ice directly on the burn\n" +
-            "Gently pat the area dry with a clean cloth\n" +
-            "Apply a sterile gauze bandage loosely\n" +
-            "Do not apply butter, oil, or home remedies\n" +
-            "Take over-the-counter pain medication if needed\n" +
-            "Call 119 for severe burns or if unsure";
+        String content = "열원에서 즉시 떨어지세요\n" +
+            "뜨거운 옷이나 장신구를 조심스럽게 제거하세요\n" +
+            "찬물로 10-15분 동안 화상 부위를 식혀주세요\n" +
+            "화상 부위에 직접 얼음을 사용하지 마세요\n" +
+            "깨끗한 천으로 부위를 부드럽게 두드려 말리세요\n" +
+            "멸균 거즈 붕대를 느슨하게 감아주세요\n" +
+            "버터, 오일, 민간요법을 바르지 마세요\n" +
+            "필요시 일반의약품 진통제를 복용하세요\n" +
+            "심각한 화상이거나 확실하지 않다면 119에 신고하세요";
 
-        String summary = "Immediate cooling and proper burn care are essential to prevent further damage.";
+        String summary = "즉각적인 냉각과 적절한 화상 처치가 추가 손상을 방지하는 데 필수적입니다.";
 
-        String recommendedAction = "Call 119 immediately and cool the burn with running water";
+        String recommendedAction = "즉시 119에 신고하고 찬물로 화상 부위를 식혀주세요";
 
         CountryIdentificationResponse identificationResponse = new CountryIdentificationResponse(
             "KR",
@@ -94,7 +94,7 @@ public class FirstAidController implements FirstAidControllerDocs {
             EmergencyContact.of("119", "112", "119", "112")
         );
 
-        String disclaimer = "This is temporary AI first aid advice. Please seek professional medical care immediately.";
+        String disclaimer = "이는 AI의 임시 응급처치 조언입니다. 참고만 하시고 빠른 시간 내에 전문의에게 상담받으세요.";
 
         Integer confidence = 89;
 
