@@ -5,10 +5,9 @@ import com.vitaltrip.vitaltrip.first_aid.domain.EmergencySymptomType;
 import com.vitaltrip.vitaltrip.first_aid.dto.EmergencyChatAdviceRequest;
 import com.vitaltrip.vitaltrip.first_aid.dto.EmergencyChatAdviceResponse;
 import com.vitaltrip.vitaltrip.first_aid.dto.GeminiParsedResponse;
-import com.vitaltrip.vitaltrip.location.client.BigDataCloudClient;
-import com.vitaltrip.vitaltrip.location.dto.BigDataCloudResponse;
-import com.vitaltrip.vitaltrip.location.dto.EmergencyContact;
-import com.vitaltrip.vitaltrip.location.service.EmergencyContactService;
+import com.vitaltrip.vitaltrip.location.dto.CountryIdentificationRequest;
+import com.vitaltrip.vitaltrip.location.dto.CountryIdentificationResponse;
+import com.vitaltrip.vitaltrip.location.service.LocationService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,15 +28,13 @@ public class FirstAidService {
     private final GeminiClient geminiClient;
     private final PromptService promptService;
     private final AiResponseParser aiResponseParser;
-    private final BigDataCloudClient bigDataCloudClient;
-    private final EmergencyContactService emergencyContactService;
+    private final LocationService locationService;
 
     public EmergencyChatAdviceResponse generateEmergencyAdvice(EmergencyChatAdviceRequest request) {
 
-        BigDataCloudResponse locationResponse = bigDataCloudClient.reverseGeocode(
-            request.latitude(), request.longitude());
-        EmergencyContact emergencyContact = emergencyContactService.getEmergencyContact(
-            locationResponse.countryCode());
+        CountryIdentificationResponse identificationResponse = locationService.identifyCountry(
+            new CountryIdentificationRequest(
+                request.latitude(), request.longitude()));
 
         String prompt = promptService.buildPrompt(request.symptomType(), request.symptomDetail());
         String aiResponse = geminiClient.generateContent(prompt);
@@ -51,7 +48,7 @@ public class FirstAidService {
             parsedResponse.content(),
             parsedResponse.summary(),
             parsedResponse.recommendedAction(),
-            emergencyContact,
+            identificationResponse,
             parsedResponse.disclaimer(),
             confidence,
             blogLinks
