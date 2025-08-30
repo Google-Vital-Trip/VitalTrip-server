@@ -47,10 +47,8 @@ public class PromptConfiguration {
                         }
                     ));
 
-                log.info("프롬프트 설정 로드 완료: {} 증상 유형", symptomSpecific.size());
             }
         } catch (Exception e) {
-            log.error("프롬프트 설정 로드 실패", e);
             throw new RuntimeException("프롬프트 설정 초기화 실패", e);
         }
     }
