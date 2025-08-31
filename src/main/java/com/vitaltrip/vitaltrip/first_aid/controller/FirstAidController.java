@@ -29,15 +29,7 @@ public class FirstAidController implements FirstAidControllerDocs {
     @Override
     public ApiResponse<EmergencyChatAdviceResponse> getEmergencyChatAdvice(
             @Valid @RequestBody EmergencyChatAdviceRequest request) {
-        //EmergencyChatAdviceResponse response = firstAidService.generateEmergencyAdvice(request);
-
-        try {
-            Thread.sleep(3000); // 3초 지연
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-
-        EmergencyChatAdviceResponse response = createDemoResponse();
+        EmergencyChatAdviceResponse response = firstAidService.generateEmergencyAdvice(request);
         return ApiResponse.success(response);
     }
 
