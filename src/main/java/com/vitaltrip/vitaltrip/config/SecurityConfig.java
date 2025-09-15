@@ -3,9 +3,7 @@ package com.vitaltrip.vitaltrip.config;
 import com.vitaltrip.vitaltrip.auth.filter.FirstAidAuthenticationFilter;
 import com.vitaltrip.vitaltrip.auth.filter.JwtAuthenticationFilter;
 import com.vitaltrip.vitaltrip.auth.handler.SimpleOAuth2SuccessHandler;
-
 import java.util.Arrays;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,76 +34,78 @@ public class SecurityConfig {
     @Order(1)
     public SecurityFilterChain firstAidFilterChain(HttpSecurity http) throws Exception {
         return http
-                .securityMatcher("/api/first-aid/**")
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().authenticated()  // 인증 필요로 설정
-                )
-                .addFilterBefore(firstAidAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(exceptions -> exceptions
-                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-                )
-                .headers(headers -> headers
-                        .frameOptions(FrameOptionsConfig::sameOrigin)
-                )
-                .build();
+            .securityMatcher("/api/first-aid/**")
+            .csrf(AbstractHttpConfigurer::disable)
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .authorizeHttpRequests(auth -> auth
+                .anyRequest().authenticated()  // 인증 필요로 설정
+            )
+            .addFilterBefore(firstAidAuthenticationFilter,
+                UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling(exceptions -> exceptions
+                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+            )
+            .headers(headers -> headers
+                .frameOptions(FrameOptionsConfig::sameOrigin)
+            )
+            .build();
     }
 
     @Bean
     @Order(2)
     public SecurityFilterChain mainFilterChain(HttpSecurity http) throws Exception {
         return http
-                // 🔧 first-aid 경로 제외
-                .securityMatcher(request -> !request.getRequestURI().startsWith("/api/first-aid"))
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/home", "/health", "/actuator/**").permitAll()
-                        .requestMatchers(
-                                "/api/auth/signup",
-                                "/api/auth/login",
-                                "/api/auth/refresh",
-                                "/api/auth/check-email"
-                        ).permitAll()
-                        .requestMatchers("/api/oauth2/**").permitAll()
-                        .requestMatchers(
-                                "/oauth2/**",
-                                "/login/oauth2/**",
-                                "/login/oauth2/code/**",
-                                "/login/oauth2/code/google",
-                                "/login",
-                                "/login/**"
-                        ).permitAll()
-                        .requestMatchers(
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/h2-console/**",
-                                "/favicon.ico",
-                                "/error"
-                        ).permitAll()
-                        .requestMatchers(
-                                "/api/location/**"
-                        ).permitAll()
-                        .anyRequest().authenticated()
-                )
-                .oauth2Login(oauth2 -> oauth2
-                        .successHandler(oAuth2SuccessHandler)
-                )
-                .exceptionHandling(exceptions -> exceptions
-                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-                )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .headers(headers -> headers
-                        .frameOptions(FrameOptionsConfig::sameOrigin)
-                )
-                .build();
+            // 🔧 first-aid 경로 제외
+            .securityMatcher(request -> !request.getRequestURI().startsWith("/api/first-aid"))
+            .csrf(AbstractHttpConfigurer::disable)
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/", "/home", "/health", "/actuator/**").permitAll()
+                .requestMatchers(
+                    "/api/auth/signup",
+                    "/api/auth/login",
+                    "/api/auth/refresh",
+                    "/api/auth/check-email"
+                ).permitAll()
+                .requestMatchers("/api/oauth2/**").permitAll()
+                .requestMatchers(
+                    "/oauth2/**",
+                    "/login/oauth2/**",
+                    "/login/oauth2/code/**",
+                    "/login/oauth2/code/google",
+                    "/login",
+                    "/login/**"
+                ).permitAll()
+                .requestMatchers(
+                    "/swagger-ui/**",
+                    "/v3/api-docs/**",
+                    "/h2-console/**",
+                    "/favicon.ico",
+                    "/error"
+                ).permitAll()
+                .requestMatchers(
+                    "/api/location/**"
+                ).permitAll()
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
+            )
+            .oauth2Login(oauth2 -> oauth2
+                .successHandler(oAuth2SuccessHandler)
+            )
+            .exceptionHandling(exceptions -> exceptions
+                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+            )
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .headers(headers -> headers
+                .frameOptions(FrameOptionsConfig::sameOrigin)
+            )
+            .build();
     }
 
     @Bean
@@ -114,14 +114,14 @@ public class SecurityConfig {
 
         configuration.setAllowedOriginPatterns(Arrays.asList("*"));
         configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:8080",
-                "http://dkswoalstest.duckdns.org",
-                "https://dkswoalstest.duckdns.org",
-                "https://vitaltrip.vercel.app"
+            "http://localhost:8080",
+            "http://dkswoalstest.duckdns.org",
+            "https://dkswoalstest.duckdns.org",
+            "https://vitaltrip.vercel.app"
         ));
 
         configuration.setAllowedMethods(Arrays.asList(
-                "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"
+            "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"
         ));
 
         configuration.setAllowedHeaders(Arrays.asList("*"));
@@ -129,8 +129,8 @@ public class SecurityConfig {
         configuration.setMaxAge(3600L);
 
         configuration.setExposedHeaders(Arrays.asList(
-                "Authorization", "Content-Type", "X-Requested-With", "accept", "Origin",
-                "Access-Control-Request-Method", "Access-Control-Request-Headers"
+            "Authorization", "Content-Type", "X-Requested-With", "accept", "Origin",
+            "Access-Control-Request-Method", "Access-Control-Request-Headers"
         ));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
