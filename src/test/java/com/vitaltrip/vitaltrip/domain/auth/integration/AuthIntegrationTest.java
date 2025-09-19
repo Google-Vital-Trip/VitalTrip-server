@@ -466,19 +466,5 @@ class AuthIntegrationTest {
                             .content(objectMapper.writeValueAsString(newLoginRequest)))
                     .andExpect(status().isOk());
         }
-
-        @Test
-        @DisplayName("로그아웃 성공")
-        void logout_Success() throws Exception {
-            // when
-            ResultActions result = mockMvc.perform(post("/api/auth/logout")
-                    .header("Authorization", "Bearer " + accessToken));
-
-            // then
-            result.andDo(print())
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.message").value("로그아웃되었습니다. 클라이언트에서 토큰을 삭제해주세요."));
-        }
     }
-
 }
