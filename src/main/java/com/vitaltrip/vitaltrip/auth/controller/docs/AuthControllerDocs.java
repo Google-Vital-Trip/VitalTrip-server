@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -108,12 +109,27 @@ public interface AuthControllerDocs {
 
     @Operation(
             summary = "로그인",
-            description = "이메일과 비밀번호로 로그인하여 JWT 토큰을 발급받습니다."
+            description = """
+                    이메일과 비밀번호로 로그인하여 JWT 토큰을 발급받습니다.
+                    
+                    ## 🍪 쿠키 설정
+                    성공적인 로그인 시 다음 쿠키가 자동으로 설정됩니다:
+                    - **accessToken**: 액세스 토큰 (1시간 유효, HttpOnly)
+                    - **refreshToken**: 리프레시 토큰 (7일 유효, HttpOnly)
+                    
+                    ## 🔐 보안 설정
+                    - **HttpOnly**: XSS 공격 방지를 위해 JavaScript에서 접근 불가
+                    - **Secure**: HTTPS 환경에서만 전송 (프로덕션)
+                    - **Path**: 전체 애플리케이션 경로에서 사용 가능
+                    - **SameSite**: CSRF 공격 방지 (Lax 설정)
+                    
+                    클라이언트는 응답 바디의 토큰을 사용하거나, 자동으로 설정된 쿠키를 통해 인증할 수 있습니다.
+                    """
     )
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "200",
-                    description = "로그인 성공",
+                    description = "로그인 성공 - 응답 바디에 토큰 포함 및 쿠키 자동 설정",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = AuthDto.AuthResponse.class),
@@ -200,16 +216,27 @@ public interface AuthControllerDocs {
                             )
                     )
             )
-            AuthDto.LoginRequest request);
+            AuthDto.LoginRequest request,
+
+            @Parameter(hidden = true) HttpServletResponse response);
 
     @Operation(
             summary = "토큰 갱신",
-            description = "리프레시 토큰을 사용하여 새로운 액세스 토큰을 발급받습니다."
+            description = """
+                    리프레시 토큰을 사용하여 새로운 액세스 토큰을 발급받습니다.
+                    
+                    ## 🍪 쿠키 업데이트
+                    성공적인 토큰 갱신 시:
+                    - **accessToken** 쿠키가 새로운 토큰으로 업데이트됩니다
+                    - **refreshToken** 쿠키는 그대로 유지됩니다
+                    
+                    클라이언트는 응답 바디의 새로운 액세스 토큰을 사용하거나, 자동으로 업데이트된 쿠키를 사용할 수 있습니다.
+                    """
     )
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "200",
-                    description = "토큰 갱신 성공",
+                    description = "토큰 갱신 성공 - 새로운 액세스 토큰 쿠키 설정",
                     content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = AuthDto.TokenResponse.class),
@@ -270,7 +297,9 @@ public interface AuthControllerDocs {
                             )
                     )
             )
-            AuthDto.TokenRefreshRequest request);
+            AuthDto.TokenRefreshRequest request,
+
+            @Parameter(hidden = true) HttpServletResponse response);
 
     @Operation(
             summary = "비밀번호 변경",
@@ -356,19 +385,29 @@ public interface AuthControllerDocs {
 
     @Operation(
             summary = "로그아웃",
-            description = "현재 세션을 종료합니다. 클라이언트에서 토큰을 삭제해야 합니다.",
+            description = """
+                    현재 세션을 종료하고 토큰을 무효화합니다.
+                    
+                    ## 🍪 쿠키 삭제
+                    로그아웃 시 다음과 같이 처리됩니다:
+                    - **accessToken** 쿠키 삭제
+                    - **refreshToken** 쿠키 삭제
+                    - 모든 토큰 쿠키의 만료시간을 0으로 설정하여 즉시 삭제
+                    
+                    클라이언트에서는 별도로 토큰을 삭제할 필요가 없습니다.
+                    """,
             security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "200",
-                    description = "로그아웃 성공",
+                    description = "로그아웃 성공 - 모든 토큰 쿠키 삭제",
                     content = @Content(
                             mediaType = "application/json",
                             examples = @ExampleObject(
                                     value = """
                                             {
-                                              "message": "로그아웃되었습니다. 클라이언트에서 토큰을 삭제해주세요."
+                                              "message": "로그아웃되었습니다. 토큰이 삭제되었습니다."
                                             }
                                             """
                             )
@@ -391,7 +430,8 @@ public interface AuthControllerDocs {
             )
     })
     ApiResponse<String> logout(
-            @Parameter(hidden = true) @AuthenticationPrincipal User user);
+            @Parameter(hidden = true) @AuthenticationPrincipal User user,
+            @Parameter(hidden = true) HttpServletResponse response);
 
     @Operation(
             summary = "이메일 중복 검사",

@@ -5,10 +5,13 @@ import com.vitaltrip.vitaltrip.common.dto.ApiResponse;
 import com.vitaltrip.vitaltrip.auth.dto.AuthDto;
 import com.vitaltrip.vitaltrip.auth.service.AuthService;
 import com.vitaltrip.vitaltrip.user.domain.User;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +30,21 @@ public class AuthController implements AuthControllerDocs {
 
     private final AuthService authService;
 
+    @Value("${app.auth.cookie.domain:}")
+    private String cookieDomain;
+
+    @Value("${app.auth.cookie.secure:false}")
+    private boolean cookieSecure;
+
+    @Value("${app.auth.cookie.access-token-max-age:3600}")
+    private int accessTokenMaxAge; // 1시간
+
+    @Value("${app.auth.cookie.refresh-token-max-age:604800}")
+    private int refreshTokenMaxAge; // 7일
+
+    private static final String ACCESS_TOKEN_COOKIE_NAME = "accessToken";
+    private static final String REFRESH_TOKEN_COOKIE_NAME = "refreshToken";
+
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
     @Override
@@ -37,16 +55,24 @@ public class AuthController implements AuthControllerDocs {
 
     @PostMapping("/login")
     @Override
-    public ApiResponse<AuthDto.AuthResponse> login(@Valid @RequestBody AuthDto.LoginRequest request) {
-        AuthDto.AuthResponse response = authService.login(request);
-        return ApiResponse.success(response);
+    public ApiResponse<AuthDto.AuthResponse> login(@Valid @RequestBody AuthDto.LoginRequest request,
+                                                   HttpServletResponse response) {
+        AuthDto.AuthResponse authResponse = authService.login(request);
+
+        setTokenCookies(response, authResponse.accessToken(), authResponse.refreshToken());
+
+        return ApiResponse.success(authResponse);
     }
 
     @PostMapping("/refresh")
     @Override
-    public ApiResponse<AuthDto.TokenResponse> refreshToken(@Valid @RequestBody AuthDto.TokenRefreshRequest request) {
-        AuthDto.TokenResponse response = authService.refreshToken(request);
-        return ApiResponse.success(response);
+    public ApiResponse<AuthDto.TokenResponse> refreshToken(@Valid @RequestBody AuthDto.TokenRefreshRequest request,
+                                                           HttpServletResponse response) {
+        AuthDto.TokenResponse tokenResponse = authService.refreshToken(request);
+
+        setAccessTokenCookie(response, tokenResponse.accessToken());
+
+        return ApiResponse.success(tokenResponse);
     }
 
     @PutMapping("/password")
@@ -59,8 +85,11 @@ public class AuthController implements AuthControllerDocs {
 
     @PostMapping("/logout")
     @Override
-    public ApiResponse<String> logout(@AuthenticationPrincipal User user) {
-        return ApiResponse.success("로그아웃되었습니다. 클라이언트에서 토큰을 삭제해주세요.");
+    public ApiResponse<String> logout(@AuthenticationPrincipal User user,
+                                      HttpServletResponse response) {
+        clearTokenCookies(response);
+
+        return ApiResponse.success("로그아웃되었습니다. 토큰이 삭제되었습니다.");
     }
 
     @GetMapping("/check-email")
@@ -74,5 +103,59 @@ public class AuthController implements AuthControllerDocs {
         } else {
             return ApiResponse.success(response);
         }
+    }
+
+    /**
+     * 액세스 토큰과 리프레시 토큰을 쿠키에 설정
+     */
+    private void setTokenCookies(HttpServletResponse response, String accessToken, String refreshToken) {
+        setAccessTokenCookie(response, accessToken);
+        setRefreshTokenCookie(response, refreshToken);
+    }
+
+    /**
+     * 액세스 토큰을 쿠키에 설정
+     */
+    private void setAccessTokenCookie(HttpServletResponse response, String accessToken) {
+        Cookie accessCookie = createSecureCookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, accessTokenMaxAge);
+        response.addCookie(accessCookie);
+    }
+
+    /**
+     * 리프레시 토큰을 쿠키에 설정
+     */
+    private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
+        Cookie refreshCookie = createSecureCookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, refreshTokenMaxAge);
+        response.addCookie(refreshCookie);
+    }
+
+    /**
+     * 토큰 쿠키들을 삭제 (로그아웃 시)
+     */
+    private void clearTokenCookies(HttpServletResponse response) {
+        Cookie accessCookie = createSecureCookie(ACCESS_TOKEN_COOKIE_NAME, "", 0);
+        Cookie refreshCookie = createSecureCookie(REFRESH_TOKEN_COOKIE_NAME, "", 0);
+
+        response.addCookie(accessCookie);
+        response.addCookie(refreshCookie);
+    }
+
+    /**
+     * 보안 쿠키 생성
+     */
+    private Cookie createSecureCookie(String name, String value, int maxAge) {
+        Cookie cookie = new Cookie(name, value);
+
+        // 쿠키 설정
+        cookie.setHttpOnly(true);
+        cookie.setSecure(cookieSecure);
+        cookie.setPath("/");
+        cookie.setMaxAge(maxAge);
+
+        if (cookieDomain != null && !cookieDomain.trim().isEmpty()) {
+            cookie.setDomain(cookieDomain);
+        }
+
+        return cookie;
     }
 }
