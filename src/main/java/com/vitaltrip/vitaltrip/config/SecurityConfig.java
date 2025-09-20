@@ -73,7 +73,8 @@ public class SecurityConfig {
                                 "/api/auth/signup",
                                 "/api/auth/login",
                                 "/api/auth/refresh",
-                                "/api/auth/check-email"
+                                "/api/auth/check-email",
+                                "/api/auth/admin/login"
                         ).permitAll()
                         .requestMatchers("/api/oauth2/**").permitAll()
                         .requestMatchers(

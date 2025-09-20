@@ -64,6 +64,17 @@ public class AuthController implements AuthControllerDocs {
         return ApiResponse.success(authResponse);
     }
 
+    @PostMapping("/admin/login")
+    @Override
+    public ApiResponse<String> adminLogin(@Valid @RequestBody AuthDto.LoginRequest request,
+                                          HttpServletResponse response) {
+        AuthDto.AuthResponse authResponse = authService.adminLogin(request);
+
+        setTokenCookies(response, authResponse.accessToken(), authResponse.refreshToken());
+
+        return ApiResponse.success("어드민 로그인이 완료되었습니다");
+    }
+
     @PostMapping("/refresh")
     @Override
     public ApiResponse<AuthDto.TokenResponse> refreshToken(@Valid @RequestBody AuthDto.TokenRefreshRequest request,

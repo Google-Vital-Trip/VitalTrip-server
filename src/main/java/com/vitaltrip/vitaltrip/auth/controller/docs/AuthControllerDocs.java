@@ -221,6 +221,129 @@ public interface AuthControllerDocs {
             @Parameter(hidden = true) HttpServletResponse response);
 
     @Operation(
+            summary = "어드민 로그인",
+            description = """
+                    관리자 계정으로 로그인합니다. 일반 로그인과 유사하지만 다음과 같은 차이점이 있습니다:
+                    
+                    ## 🎯 어드민 로그인 특징
+                    - **ADMIN 권한 필수**: USER 권한 계정으로는 로그인할 수 없습니다
+                    - **토큰 쿠키 전용**: 응답 바디에는 토큰이 포함되지 않고 쿠키에만 설정됩니다
+                    - **보안 강화**: 관리자 전용 세션 관리를 위한 별도 엔드포인트
+                    
+                    ## 🍪 쿠키 설정
+                    성공적인 어드민 로그인 시 다음 쿠키가 자동으로 설정됩니다:
+                    - **accessToken**: 액세스 토큰 (1시간 유효, HttpOnly)
+                    - **refreshToken**: 리프레시 토큰 (7일 유효, HttpOnly)
+                    
+                    ## 🔐 보안 설정
+                    - **HttpOnly**: XSS 공격 방지를 위해 JavaScript에서 접근 불가
+                    - **Secure**: HTTPS 환경에서만 전송 (프로덕션)
+                    - **Path**: 전체 애플리케이션 경로에서 사용 가능
+                    - **Domain**: 설정된 도메인에서만 유효
+                    
+                    ## 💡 사용 시나리오
+                    - 관리자 대시보드 로그인
+                    - 백오피스 시스템 접근
+                    - 시스템 관리 작업 시 사용
+                    """
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "어드민 로그인 성공 - 토큰은 쿠키에만 설정됨",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "message": "어드민 로그인이 완료되었습니다"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "소셜 로그인 사용자의 어드민 로그인 시도",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "message": "소셜 로그인 사용자는 해당 방식으로 로그인해주세요",
+                                              "errorCode": "INVALID_REQUEST"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "401",
+                    description = "비밀번호 불일치",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "message": "비밀번호가 일치하지 않습니다",
+                                              "errorCode": "UNAUTHORIZED"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "403",
+                    description = "ADMIN 권한 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "message": "관리자 권한이 필요합니다",
+                                              "errorCode": "FORBIDDEN"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "404",
+                    description = "등록되지 않은 이메일",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "message": "등록되지 않은 이메일입니다",
+                                              "errorCode": "RESOURCE_NOT_FOUND"
+                                            }
+                                            """
+                            )
+                    )
+            )
+    })
+    ApiResponse<String> adminLogin(
+            @Valid @RequestBody
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "어드민 로그인 정보 (일반 로그인과 동일한 형식)",
+                    content = @Content(
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                               "email": "test@example.com",
+                                               "password": "Password123!"
+                                            }
+                                            """
+                            )
+                    )
+            )
+            AuthDto.LoginRequest request,
+
+            @Parameter(hidden = true) HttpServletResponse response);
+
+
+    @Operation(
             summary = "토큰 갱신",
             description = """
                     리프레시 토큰을 사용하여 새로운 액세스 토큰을 발급받습니다.

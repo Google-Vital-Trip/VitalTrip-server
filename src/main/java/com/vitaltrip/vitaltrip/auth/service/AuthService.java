@@ -66,6 +66,26 @@ public class AuthService {
         return createAuthResponse(user);
     }
 
+    public AuthDto.AuthResponse adminLogin(AuthDto.LoginRequest request) {
+
+        User user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new CustomException(ErrorType.RESOURCE_NOT_FOUND, "등록되지 않은 이메일입니다"));
+
+        if (user.getProvider() != User.AuthProvider.LOCAL) {
+            throw new CustomException(ErrorType.INVALID_REQUEST, "소셜 로그인 사용자는 해당 방식으로 로그인해주세요");
+        }
+
+        if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
+            throw new CustomException(ErrorType.UNAUTHORIZED, "비밀번호가 일치하지 않습니다");
+        }
+
+        if (user.getRole() != User.Role.ADMIN) {
+            throw new CustomException(ErrorType.FORBIDDEN, "관리자 권한이 필요합니다");
+        }
+
+        return createAuthResponse(user);
+    }
+
     public AuthDto.TokenResponse refreshToken(AuthDto.TokenRefreshRequest request) {
 
         String refreshToken = request.refreshToken();
