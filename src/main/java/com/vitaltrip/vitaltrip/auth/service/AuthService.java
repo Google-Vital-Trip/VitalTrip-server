@@ -1,9 +1,9 @@
 package com.vitaltrip.vitaltrip.auth.service;
 
-import com.vitaltrip.vitaltrip.common.exception.CustomException;
-import com.vitaltrip.vitaltrip.common.exception.ErrorType;
 import com.vitaltrip.vitaltrip.auth.dto.AuthDto;
 import com.vitaltrip.vitaltrip.auth.util.JwtUtil;
+import com.vitaltrip.vitaltrip.common.exception.CustomException;
+import com.vitaltrip.vitaltrip.common.exception.ErrorType;
 import com.vitaltrip.vitaltrip.user.domain.User;
 import com.vitaltrip.vitaltrip.user.dto.UserInfoResponse;
 import com.vitaltrip.vitaltrip.user.repository.UserRepository;
@@ -37,15 +37,15 @@ public class AuthService {
         String encodedPassword = passwordEncoder.encode(request.password());
 
         User user = User.builder()
-                .email(request.email())
-                .name(request.name())
-                .passwordHash(encodedPassword)
-                .birthDate(request.birthDate())
-                .countryCode(request.countryCode())
-                .phoneNumber(request.phoneNumber())
-                .provider(User.AuthProvider.LOCAL)
-                .role(User.Role.USER)
-                .build();
+            .email(request.email())
+            .name(request.name())
+            .passwordHash(encodedPassword)
+            .birthDate(request.birthDate())
+            .countryCode(request.countryCode())
+            .phoneNumber(request.phoneNumber())
+            .provider(User.AuthProvider.LOCAL)
+            .role(User.Role.USER)
+            .build();
 
         userRepository.save(user);
     }
@@ -53,7 +53,7 @@ public class AuthService {
     public AuthDto.AuthResponse login(AuthDto.LoginRequest request) {
 
         User user = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> new CustomException(ErrorType.RESOURCE_NOT_FOUND, "등록되지 않은 이메일입니다"));
+            .orElseThrow(() -> new CustomException(ErrorType.RESOURCE_NOT_FOUND, "등록되지 않은 이메일입니다"));
 
         if (user.getProvider() != User.AuthProvider.LOCAL) {
             throw new CustomException(ErrorType.INVALID_REQUEST, "소셜 로그인 사용자는 해당 방식으로 로그인해주세요");
@@ -96,7 +96,7 @@ public class AuthService {
 
         String userId = jwtUtil.getUserId(refreshToken);
         User user = userRepository.findById(Long.parseLong(userId))
-                .orElseThrow(() -> new CustomException(ErrorType.RESOURCE_NOT_FOUND, "사용자를 찾을 수 없습니다"));
+            .orElseThrow(() -> new CustomException(ErrorType.RESOURCE_NOT_FOUND, "사용자를 찾을 수 없습니다"));
 
         String newAccessToken = jwtUtil.generateAccessToken(user);
 
@@ -134,13 +134,13 @@ public class AuthService {
         String refreshToken = jwtUtil.generateRefreshToken(user);
 
         UserInfoResponse userInfo = new UserInfoResponse(
-                user.getId(),
-                user.getEmail(),
-                user.getName(),
-                user.getBirthDate(),
-                user.getCountryCode(),
-                user.getPhoneNumber(),
-                user.getProfileImageUrl()
+            user.getId(),
+            user.getEmail(),
+            user.getName(),
+            user.getBirthDate(),
+            user.getCountryCode(),
+            user.getPhoneNumber(),
+            user.getProfileImageUrl()
         );
 
         return new AuthDto.AuthResponse(accessToken, refreshToken, userInfo);
