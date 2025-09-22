@@ -1,13 +1,16 @@
 package com.vitaltrip.vitaltrip.admin.controller;
 
 import com.vitaltrip.vitaltrip.admin.controller.docs.AdminControllerDocs;
+import com.vitaltrip.vitaltrip.admin.dto.AdminCheckResponse;
 import com.vitaltrip.vitaltrip.admin.dto.UserPageResponse;
 import com.vitaltrip.vitaltrip.admin.service.AdminService;
 import com.vitaltrip.vitaltrip.common.dto.ApiResponse;
+import com.vitaltrip.vitaltrip.user.domain.User;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,6 +37,14 @@ public class AdminController implements AdminControllerDocs {
         int size
     ) {
         UserPageResponse response = adminService.getAllUsers(page, size);
+        return ApiResponse.success(response);
+    }
+
+    @GetMapping("/me")
+    @Override
+    public ApiResponse<AdminCheckResponse> checkAdminStatus(@AuthenticationPrincipal User user) {
+        boolean isAdmin = user != null && user.getRole() == User.Role.ADMIN;
+        AdminCheckResponse response = new AdminCheckResponse(isAdmin);
         return ApiResponse.success(response);
     }
 }
