@@ -65,10 +65,7 @@ public class SwaggerConfig {
                     .url("http://localhost:8080")
                     .description("로컬 개발 서버"),
                 new Server()
-                    .url("http://dkswoalstest.duckdns.org")
-                    .description("개발 환경 서버"),
-                new Server()
-                    .url("https://dkswoalstest.duckdns.org")
+                    .url("https://api.aivitaltrip.com")
                     .description("개발 환경 서버(https)")
             ))
             .components(new Components()
