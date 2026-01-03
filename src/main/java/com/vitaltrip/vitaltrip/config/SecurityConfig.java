@@ -61,9 +61,7 @@ public class SecurityConfig {
     public SecurityFilterChain mainFilterChain(HttpSecurity http) throws Exception {
         return http
                 .securityMatcher(request -> !request.getRequestURI().startsWith("/api/first-aid"))
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/h2-console/**")
-                )
+                .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -132,11 +130,14 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
+        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:8080",
-                "http://localhost:3000",
-                "https://aivitaltrip.com",
-                "https://api.aivitaltrip.com"
+                "http://localhost:3000", // 프론트엔드 개발 서버
+                "http://dkswoalstest.duckdns.org",
+                "https://dkswoalstest.duckdns.org",
+                "https://vitaltrip.vercel.app"
         ));
 
         configuration.setAllowedMethods(Arrays.asList(
