@@ -137,7 +137,7 @@ public class SecurityConfig {
                 "http://localhost:3000", // 프론트엔드 개발 서버
                 "http://dkswoalstest.duckdns.org",
                 "https://dkswoalstest.duckdns.org",
-                "https://vitaltrip.vercel.app"
+                "https://admin.aivitaltrip.com"
         ));
 
         configuration.setAllowedMethods(Arrays.asList(
