@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collections;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class FirstAidAuthenticationFilter extends OncePerRequestFilter {
@@ -30,6 +32,17 @@ public class FirstAidAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
+        String requestURI = request.getRequestURI();
+
+        // /api/first-aid/** 경로가 아니면 이 필터는 아무것도 하지 않음
+        if (!requestURI.startsWith("/api/first-aid")) {
+            log.debug("FirstAidAuthenticationFilter 건너뜀 (first-aid 경로 아님): {}", requestURI);
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        log.debug("FirstAidAuthenticationFilter 실행: {}", requestURI);
+
         String token = getTokenFromRequest(request);
 
         try {
@@ -38,14 +51,18 @@ public class FirstAidAuthenticationFilter extends OncePerRequestFilter {
                 User user = userRepository.findById(Long.parseLong(userId)).orElse(null);
 
                 if (user != null) {
+                    log.debug("FirstAid: 인증된 사용자 - userId={}", userId);
                     setAuthenticatedUser(request, user);
                 } else {
+                    log.debug("FirstAid: 익명 사용자 (user not found)");
                     setAnonymousUser(request);
                 }
             } else {
+                log.debug("FirstAid: 익명 사용자 (no valid token)");
                 setAnonymousUser(request);
             }
         } catch (Exception e) {
+            log.debug("FirstAid: 익명 사용자 (exception)", e);
             setAnonymousUser(request);
         }
 
