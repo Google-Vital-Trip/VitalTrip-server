@@ -1,6 +1,6 @@
 package com.vitaltrip.vitaltrip.common.exception;
 
-import com.vitaltrip.vitaltrip.common.dto.ApiResponse;
+import com.vitaltrip.vitaltrip.presentation.health.dto.ApiResponse;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSourceResolvable;
