@@ -7,27 +7,22 @@ import com.vitaltrip.vitaltrip.presentation.location.dto.Location;
 import com.vitaltrip.vitaltrip.presentation.location.dto.GoogleTextSearchRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class GoogleLocationClient {
+public class GooglePlacesClient {
 
-    @Value("${google.api.location.default-field-mask}")
-    private String defaultFieldMask;
-
-    private final RestClient googleLocationRestClient;
+    private final RestClient googlePlacesRestClient;
 
     public GoogleTextSearchResponse textSearch(String keyword, Location location, Double radiusMeters, String language) {
         GoogleTextSearchRequest requestBody = createRequestBody(keyword, location, radiusMeters, language);
 
         try {
-            return googleLocationRestClient.post()
+            return googlePlacesRestClient.post()
                     .uri("/places:searchText")
-                    .header("X-Goog-FieldMask", defaultFieldMask)
                     .body(requestBody)
                     .retrieve()
                     .body(GoogleTextSearchResponse.class);
