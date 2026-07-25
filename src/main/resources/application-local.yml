@@ -24,8 +24,6 @@ spring:
             redirect-uri: http://localhost:8080/login/oauth2/code/google
 
 auth:
-  jwt:
-    secret: localOnlyDevSecretKeyThatIsAtLeast256BitsLongForHs256Hmac0123456789
   cookie:
     domain: ""
     secure: false
