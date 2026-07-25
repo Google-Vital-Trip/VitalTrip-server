@@ -14,16 +14,14 @@ import org.springframework.web.client.RestClient;
 public class GeminiClientConfig {
 
     private final RestClient.Builder baseRestClientBuilder;
-
-    @Value("${gemini.api.base-url}")
-    private String geminiBaseUrl;
+    private final GeminiClientProperties properties;
 
     @Bean
     @Qualifier("geminiRestClient")
     public RestClient geminiRestClient() {
         return baseRestClientBuilder
                 .clone()
-                .baseUrl(geminiBaseUrl)
+                .baseUrl(properties.baseUrl())
                 .build();
     }
 }
