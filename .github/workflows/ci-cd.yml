@@ -31,11 +31,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Create test application.properties
-        run: |
-          mkdir -p src/test/resources
-          echo "${{ secrets.TEST_APPLICATION_PROPERTIES }}" > src/test/resources/application-test.properties
-
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
@@ -45,7 +40,7 @@ jobs:
   deploy-develop:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    if: false && github.ref == 'refs/heads/develop' && github.event_name == 'push'
 
     steps:
       - uses: actions/checkout@v4
