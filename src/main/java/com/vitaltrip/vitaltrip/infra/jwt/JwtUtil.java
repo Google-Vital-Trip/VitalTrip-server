@@ -5,10 +5,12 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import javax.crypto.SecretKey;
+
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -16,44 +18,38 @@ import org.springframework.stereotype.Component;
 public class JwtUtil {
 
     private final SecretKey secretKey;
-    private final long accessTokenExpiration;
-    private final long refreshTokenExpiration;
+    private final JwtProperties properties;
 
-    public JwtUtil(
-        @Value("${jwt.secret}") String secret,
-        @Value("${jwt.access-token-expiration}") long accessTokenExpiration,
-        @Value("${jwt.refresh-token-expiration}") long refreshTokenExpiration
-    ) {
-        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());
-        this.accessTokenExpiration = accessTokenExpiration;
-        this.refreshTokenExpiration = refreshTokenExpiration;
+    public JwtUtil(JwtProperties properties) {
+        this.properties = properties;
+        this.secretKey = Keys.hmacShaKeyFor(
+                properties.secret().getBytes(StandardCharsets.UTF_8));
     }
 
     public String generateAccessToken(User user) {
-        return generateToken(user, accessTokenExpiration);
+        return generateToken(user, properties.accessTokenExpiration());
     }
 
     public String generateRefreshToken(User user) {
-        return generateToken(user, refreshTokenExpiration);
+        return generateToken(user, properties.refreshTokenExpiration());
     }
 
     public String generateTempToken(User user) {
-        long tempTokenExpiration = 1800000;
 
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + tempTokenExpiration);
+        Date expiryDate = new Date(now.getTime() + properties.tempTokenExpiration());
 
         return Jwts.builder()
-            .subject(user.getId().toString())
-            .claim("email", user.getEmail())
-            .claim("name", user.getName())
-            .claim("phoneNumber", user.getPhoneNumber())
-            .claim("temp", true)
-            .claim("role", "TEMP_USER")
-            .issuedAt(now)
-            .expiration(expiryDate)
-            .signWith(secretKey)
-            .compact();
+                .subject(user.getId().toString())
+                .claim("email", user.getEmail())
+                .claim("name", user.getName())
+                .claim("phoneNumber", user.getPhoneNumber())
+                .claim("temp", true)
+                .claim("role", "TEMP_USER")
+                .issuedAt(now)
+                .expiration(expiryDate)
+                .signWith(secretKey)
+                .compact();
     }
 
     private String generateToken(User user, long expiration) {
@@ -61,25 +57,25 @@ public class JwtUtil {
         Date expiryDate = new Date(now.getTime() + expiration);
 
         return Jwts.builder()
-            .subject(user.getId().toString())
-            .claim("email", user.getEmail())
-            .claim("name", user.getName())
-            .claim("countryCode", user.getCountryCode())
-            .claim("phoneNumber", user.getPhoneNumber())
-            .claim("role", user.getRole().name())
-            .issuedAt(now)
-            .expiration(expiryDate)
-            .signWith(secretKey)
-            .compact();
+                .subject(user.getId().toString())
+                .claim("email", user.getEmail())
+                .claim("name", user.getName())
+                .claim("countryCode", user.getCountryCode())
+                .claim("phoneNumber", user.getPhoneNumber())
+                .claim("role", user.getRole().name())
+                .issuedAt(now)
+                .expiration(expiryDate)
+                .signWith(secretKey)
+                .compact();
     }
 
     public Claims getClaims(String token) {
         try {
             return Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
         } catch (JwtException e) {
             log.error("JWT parsing error: {}", e.getMessage());
             throw e;
@@ -121,7 +117,7 @@ public class JwtUtil {
         try {
             Claims claims = getClaims(token);
             return claims.get("temp", Boolean.class) != null &&
-                claims.get("temp", Boolean.class);
+                    claims.get("temp", Boolean.class);
         } catch (JwtException e) {
             return false;
         }

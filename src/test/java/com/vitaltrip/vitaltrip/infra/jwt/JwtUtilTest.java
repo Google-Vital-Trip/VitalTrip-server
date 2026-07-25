@@ -6,7 +6,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.vitaltrip.vitaltrip.domain.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
+
 import java.util.Date;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -20,20 +22,21 @@ class JwtUtilTest {
     @BeforeEach
     void setUp() {
         // JwtUtil 생성 (테스트용 설정)
-        jwtUtil = new JwtUtil(
-            "myTestSecretKeyForJWTTokenGeneration123456789",
-            3600000L,  // 1시간
-            604800000L // 7일
-        );
+        jwtUtil = new JwtUtil(new JwtProperties(
+                "myTestSecretKeyForJWTTokenGeneration123456789",
+                3600000L,  // 1시간
+                604800000L // 7일
+                , 1800000L
+        ));
 
         testUser = User.builder()
-            .id(1L)
-            .email("test@example.com")
-            .name("홍길동")
-            .countryCode("KR")
-            .phoneNumber("+821012345678")
-            .role(User.Role.USER)
-            .build();
+                .id(1L)
+                .email("test@example.com")
+                .name("홍길동")
+                .countryCode("KR")
+                .phoneNumber("+821012345678")
+                .role(User.Role.USER)
+                .build();
     }
 
     @Nested
@@ -203,13 +206,13 @@ class JwtUtilTest {
         void getPhoneNumber_WhenNull() {
             // given
             User userWithoutPhone = User.builder()
-                .id(1L)
-                .email("test@example.com")
-                .name("홍길동")
-                .countryCode("KR")
-                .phoneNumber(null)
-                .role(User.Role.USER)
-                .build();
+                    .id(1L)
+                    .email("test@example.com")
+                    .name("홍길동")
+                    .countryCode("KR")
+                    .phoneNumber(null)
+                    .role(User.Role.USER)
+                    .build();
 
             String token = jwtUtil.generateAccessToken(userWithoutPhone);
 
@@ -239,11 +242,12 @@ class JwtUtilTest {
         @DisplayName("만료된 토큰 검증 실패")
         void validateToken_ExpiredToken_ReturnsFalse() throws InterruptedException {
             // given - 매우 짧은 만료 시간으로 토큰 생성
-            JwtUtil shortLivedJwtUtil = new JwtUtil(
-                "myTestSecretKeyForJWTTokenGeneration123456789",
-                1L,  // 1ms
-                1L   // 1ms
-            );
+            JwtUtil shortLivedJwtUtil = new JwtUtil(new JwtProperties(
+                    "myTestSecretKeyForJWTTokenGeneration123456789",
+                    1L,  // 1ms
+                    1L   // 1ms
+                    , 1800000L
+            ));
 
             String token = shortLivedJwtUtil.generateAccessToken(testUser);
 
@@ -263,7 +267,7 @@ class JwtUtilTest {
 
             // when & then
             assertThatThrownBy(() -> jwtUtil.getClaims(invalidToken))
-                .isInstanceOf(JwtException.class);
+                    .isInstanceOf(JwtException.class);
         }
 
         @Test
@@ -274,7 +278,7 @@ class JwtUtilTest {
 
             // when & then
             assertThatThrownBy(() -> jwtUtil.getUserId(invalidToken))
-                .isInstanceOf(JwtException.class);
+                    .isInstanceOf(JwtException.class);
         }
 
         @Test
