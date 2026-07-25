@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT:3306}/${DB_NAME}?characterEncoding=UTF-8&sslMode=REQUIRED&rewriteBatchedStatements=true
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: ${DB_POOL_MAX:10}
+      minimum-idle: 2
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+server:
+  forward-headers-strategy: framework
+
+auth:
+  cookie:
+    domain: ${COOKIE_DOMAIN}
+    secure: true
+    same-site: None
+
+logging:
+  level:
+    org.springframework.security: WARN

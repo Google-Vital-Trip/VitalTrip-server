@@ -1,0 +1,40 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:devdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL
+    username: sa
+    password: ""
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            redirect-uri: http://localhost:8080/login/oauth2/code/google
+
+auth:
+  cookie:
+    domain: ""
+    secure: false
+    same-site: Lax
+
+app:
+  oauth2:
+    authorized-redirect-uri: http://localhost:3000/auth/callback
+
+logging:
+  level:
+    com.vitaltrip.vitaltrip: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG

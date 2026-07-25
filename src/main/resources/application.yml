@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: vitaltrip
+
+  profiles:
+    default: local
+
+  config:
+    import:
+      - classpath:config/auth.yml
+      - classpath:config/oauth.yml
+      - classpath:config/ai.yml
+      - classpath:config/places.yml
+      - classpath:config/news.yml
+
+server:
+  port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+logging:
+  level:
+    root: INFO

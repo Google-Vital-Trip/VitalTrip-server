@@ -33,21 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController implements AuthControllerDocs {
 
     private final AuthService authService;
-
-    @Value("${app.auth.cookie.domain:}")
-    private String cookieDomain;
-
-    @Value("${app.auth.cookie.secure:true}")
-    private boolean cookieSecure;
-
-    @Value("${app.auth.cookie.same-site:None}")
-    private String cookieSameSite;
-
-    @Value("${app.auth.cookie.access-token-max-age:3600}")
-    private int accessTokenMaxAge;
-
-    @Value("${app.auth.cookie.refresh-token-max-age:604800}")
-    private int refreshTokenMaxAge;
+    private final CookieProperties cookieProperties;
 
     private static final String ACCESS_TOKEN_COOKIE_NAME = "accessToken";
     private static final String REFRESH_TOKEN_COOKIE_NAME = "refreshToken";
@@ -62,8 +48,7 @@ public class AuthController implements AuthControllerDocs {
 
     @PostMapping("/login")
     @Override
-    public ApiResponse<AuthDto.AuthResponse> login(@Valid @RequestBody AuthDto.LoginRequest request,
-        HttpServletResponse response) {
+    public ApiResponse<AuthDto.AuthResponse> login(@Valid @RequestBody AuthDto.LoginRequest request, HttpServletResponse response) {
         AuthDto.AuthResponse authResponse = authService.login(request);
         setTokenCookies(response, authResponse.accessToken(), authResponse.refreshToken());
         return ApiResponse.success(authResponse);
@@ -71,8 +56,7 @@ public class AuthController implements AuthControllerDocs {
 
     @PostMapping("/admin/login")
     @Override
-    public ApiResponse<String> adminLogin(@Valid @RequestBody AuthDto.LoginRequest request,
-        HttpServletResponse response) {
+    public ApiResponse<String> adminLogin(@Valid @RequestBody AuthDto.LoginRequest request, HttpServletResponse response) {
         AuthDto.AuthResponse authResponse = authService.adminLogin(request);
         setTokenCookies(response, authResponse.accessToken(), authResponse.refreshToken());
         return ApiResponse.success("어드민 로그인이 완료되었습니다");
@@ -80,8 +64,7 @@ public class AuthController implements AuthControllerDocs {
 
     @PostMapping("/refresh")
     @Override
-    public ApiResponse<AuthDto.TokenResponse> refreshToken(@Valid @RequestBody AuthDto.TokenRefreshRequest request,
-        HttpServletResponse response) {
+    public ApiResponse<AuthDto.TokenResponse> refreshToken(@Valid @RequestBody AuthDto.TokenRefreshRequest request, HttpServletResponse response) {
         AuthDto.TokenResponse tokenResponse = authService.refreshToken(request);
         setAccessTokenCookie(response, tokenResponse.accessToken());
         return ApiResponse.success(tokenResponse);
@@ -104,8 +87,7 @@ public class AuthController implements AuthControllerDocs {
 
     @PutMapping("/password")
     @Override
-    public ApiResponse<String> changePassword(@AuthenticationPrincipal User user,
-        @Valid @RequestBody AuthDto.PasswordChangeRequest request) {
+    public ApiResponse<String> changePassword(@AuthenticationPrincipal User user, @Valid @RequestBody AuthDto.PasswordChangeRequest request) {
         authService.changePassword(user, request);
         return ApiResponse.success("비밀번호가 변경되었습니다");
     }
@@ -119,8 +101,7 @@ public class AuthController implements AuthControllerDocs {
 
     @GetMapping("/check-email")
     @Override
-    public ApiResponse<AuthDto.EmailCheckResponse> checkEmailAvailability(
-        @RequestParam("email") @Email(message = "유효한 이메일 형식이 아닙니다") @NotBlank(message = "이메일은 필수입니다") String email) {
+    public ApiResponse<AuthDto.EmailCheckResponse> checkEmailAvailability(@RequestParam("email") @Email(message = "유효한 이메일 형식이 아닙니다") @NotBlank(message = "이메일은 필수입니다") String email) {
         AuthDto.EmailCheckResponse response = authService.checkEmailAvailability(email);
         return ApiResponse.success(response);
     }
@@ -131,11 +112,11 @@ public class AuthController implements AuthControllerDocs {
     }
 
     private void setAccessTokenCookie(HttpServletResponse response, String accessToken) {
-        addSecureCookie(response, ACCESS_TOKEN_COOKIE_NAME, accessToken, accessTokenMaxAge);
+        addSecureCookie(response, ACCESS_TOKEN_COOKIE_NAME, accessToken, cookieProperties.accessTokenMaxAge());
     }
 
     private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
-        addSecureCookie(response, REFRESH_TOKEN_COOKIE_NAME, refreshToken, refreshTokenMaxAge);
+        addSecureCookie(response, REFRESH_TOKEN_COOKIE_NAME, refreshToken, cookieProperties.refreshTokenMaxAge());
     }
 
     private void clearTokenCookies(HttpServletResponse response) {
@@ -157,17 +138,17 @@ public class AuthController implements AuthControllerDocs {
     private void addSecureCookie(HttpServletResponse response, String name, String value, int maxAge) {
         try {
             ResponseCookie.ResponseCookieBuilder cookieBuilder = ResponseCookie.from(name, value)
-                .httpOnly(true)
-                .secure(cookieSecure)
-                .path("/")
-                .maxAge(maxAge);
+                    .httpOnly(true)
+                    .secure(cookieProperties.secure())
+                    .path("/")
+                    .maxAge(maxAge);
 
-            if (cookieSameSite != null && !cookieSameSite.trim().isEmpty()) {
-                cookieBuilder.sameSite(cookieSameSite);
+            if (cookieProperties.sameSite() != null && !cookieProperties.sameSite().trim().isEmpty()) {
+                cookieBuilder.sameSite(cookieProperties.sameSite());
             }
 
-            if (cookieDomain != null && !cookieDomain.trim().isEmpty()) {
-                cookieBuilder.domain(cookieDomain);
+            if (cookieProperties.domain() != null && !cookieProperties.domain().trim().isEmpty()) {
+                cookieBuilder.domain(cookieProperties.domain());
             }
 
             ResponseCookie cookie = cookieBuilder.build();
@@ -177,10 +158,11 @@ public class AuthController implements AuthControllerDocs {
             cookieValue.append(name).append("=").append(value);
             cookieValue.append("; Path=/; Max-Age=").append(maxAge).append("; HttpOnly");
 
-            if (cookieSecure) cookieValue.append("; Secure");
-            if (cookieSameSite != null) cookieValue.append("; SameSite=").append(cookieSameSite);
-            if (cookieDomain != null && !cookieDomain.trim().isEmpty()) {
-                cookieValue.append("; Domain=").append(cookieDomain);
+            if (cookieProperties.secure()) cookieValue.append("; Secure");
+            if (cookieProperties.sameSite() != null)
+                cookieValue.append("; SameSite=").append(cookieProperties.sameSite());
+            if (cookieProperties.domain() != null && !cookieProperties.domain().trim().isEmpty()) {
+                cookieValue.append("; Domain=").append(cookieProperties.domain());
             }
 
             response.addHeader("Set-Cookie", cookieValue.toString());

@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=MySQL
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+auth:
+  jwt:
+    secret: testOnlySecretKeyThatIsAtLeast256BitsLongForHs256Hmac0123456789
+  cookie:
+    domain: ""
+    secure: false
+    same-site: Lax
+
+GOOGLE_CLIENT_ID: test-client-id
+GOOGLE_CLIENT_SECRET: test-client-secret
+GOOGLE_CALLBACK_URI: http://localhost:8080/login/oauth2/code/google
+FRONTEND_REDIRECT_URI: http://localhost:3000/auth/callback
+GEMINI_API_KEY: test-gemini-key
+GOOGLE_PLACES_API_KEY: test-places-key
+NEWS_API_KEY: "00000000000000000000000000000000"

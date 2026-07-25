@@ -2,6 +2,7 @@ package com.vitaltrip.vitaltrip.infra.news;
 
 import com.vitaltrip.vitaltrip.common.exception.CustomException;
 import com.vitaltrip.vitaltrip.common.exception.ErrorType;
+import com.vitaltrip.vitaltrip.infra.news.config.NewsApiProperties;
 import com.vitaltrip.vitaltrip.presentation.news.dto.NewsApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +17,7 @@ import org.springframework.web.client.RestClientException;
 public class NewsApiClient {
 
     private final RestClient newsApiRestClient;
-
-    @Value("${news.api.key}")
-    private String apiKey;
+    private final NewsApiProperties properties;
 
     /**
      * 의료 관련 뉴스를 검색합니다.
@@ -36,7 +35,7 @@ public class NewsApiClient {
                             .queryParam("pageSize", pageSize)
                             .queryParam("language", language)
                             .queryParam("sortBy", sortBy)
-                            .queryParam("apiKey", apiKey)
+                            .queryParam("apiKey", properties.apiKey())
                             .build())
                     .retrieve()
                     .body(NewsApiResponse.class);
@@ -78,7 +77,7 @@ public class NewsApiClient {
                             .queryParam("country", country)
                             .queryParam("page", page)
                             .queryParam("pageSize", pageSize)
-                            .queryParam("apiKey", apiKey)
+                            .queryParam("apiKey", properties.apiKey())
                             .build())
                     .retrieve()
                     .body(NewsApiResponse.class);

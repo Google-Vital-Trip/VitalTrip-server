@@ -1,0 +1,10 @@
+auth:
+  jwt:
+    secret: ${JWT_SECRET}
+    access-token-expiration: 3600000
+    refresh-token-expiration: 604800000
+    temp-token-expiration: 1800000
+
+  cookie:
+    access-token-max-age: 3600
+    refresh-token-max-age: 604800
