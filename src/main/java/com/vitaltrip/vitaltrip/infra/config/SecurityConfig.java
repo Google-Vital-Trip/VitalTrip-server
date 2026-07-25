@@ -68,7 +68,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         // 기본 헬스체크 및 정적 리소스
-                        .requestMatchers("/", "/home", "/health", "/actuator/**").permitAll()
+                        .requestMatchers("/", "/home", "/health", "/actuator/health").permitAll()
 
                         // 인증 관련 퍼블릭 엔드포인트
                         .requestMatchers(
