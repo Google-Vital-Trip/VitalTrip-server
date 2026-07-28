@@ -35,7 +35,8 @@ jobs:
 
       - uses: aws-actions/amazon-ecr-login@v2
 
-      - run: |
+      - name: Build & push
+        run: |
           docker build -t $IMAGE:latest -t $IMAGE:${{ github.sha }} .
           docker push -a $IMAGE
 
@@ -45,6 +46,7 @@ jobs:
             --instance-ids ${{ secrets.EC2_INSTANCE_ID }} \
             --document-name AWS-RunShellScript \
             --parameters commands='[
+              "set -e",
               "cd /home/ubuntu/app",
               "aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login -u AWS --password-stdin ${{ secrets.ECR_REGISTRY }}",
               "docker compose pull app",
@@ -58,3 +60,7 @@ jobs:
           aws ssm get-command-invocation --command-id $CID \
             --instance-id ${{ secrets.EC2_INSTANCE_ID }} \
             --query '[Status,StandardOutputContent,StandardErrorContent]' --output text
+
+          [ "$(aws ssm get-command-invocation --command-id $CID \
+            --instance-id ${{ secrets.EC2_INSTANCE_ID }} \
+            --query Status --output text)" = "Success" ]
