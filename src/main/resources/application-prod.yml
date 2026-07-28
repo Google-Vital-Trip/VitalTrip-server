@@ -6,7 +6,9 @@ spring:
     hikari:
       maximum-pool-size: ${DB_POOL_MAX:10}
       minimum-idle: 2
-
+  flyway:
+    enabled: true
+    baseline-on-migrate: false
   jpa:
     hibernate:
       ddl-auto: validate
