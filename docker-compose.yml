@@ -21,7 +21,7 @@ services:
       start_period: 40s
 
   app:
-    image: vitaltrip-api:latest
+    image: ${ECR_REGISTRY}/vitaltrip-api:latest
     restart: unless-stopped
     depends_on:
       db:
