@@ -1,6 +1,6 @@
 package com.vitaltrip.vitaltrip.domain.user;
 
-import com.vitaltrip.vitaltrip.domain.BaseEntity;
+import com.vitaltrip.vitaltrip.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -61,10 +61,6 @@ public class User extends BaseEntity {
 
     public void updateProfileImage(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
-    }
-
-    public void updatePhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
     }
 
     public enum AuthProvider {

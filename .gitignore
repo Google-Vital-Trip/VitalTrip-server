@@ -39,3 +39,9 @@ out/
 ### Configuration files ###
 src/main/resources/*.properties
 src/test/resources/*.properties
+
+.env
+.env.*
+!.env.example
+docker-compose.override.yml
+*.pem

@@ -1,0 +1,60 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: ap-northeast-2
+  IMAGE: ${{ secrets.ECR_REGISTRY }}/vitaltrip-api
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+
+      - run: chmod +x gradlew && ./gradlew bootJar
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - uses: aws-actions/amazon-ecr-login@v2
+
+      - run: |
+          docker build -t $IMAGE:latest -t $IMAGE:${{ github.sha }} .
+          docker push -a $IMAGE
+
+      - name: Deploy
+        run: |
+          CID=$(aws ssm send-command \
+            --instance-ids ${{ secrets.EC2_INSTANCE_ID }} \
+            --document-name AWS-RunShellScript \
+            --parameters commands='[
+              "cd /home/ubuntu/app",
+              "aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login -u AWS --password-stdin ${{ secrets.ECR_REGISTRY }}",
+              "docker compose pull app",
+              "docker compose up -d app",
+              "docker image prune -af"
+            ]' --query Command.CommandId --output text)
+
+          aws ssm wait command-executed --command-id $CID \
+            --instance-id ${{ secrets.EC2_INSTANCE_ID }} || true
+
+          aws ssm get-command-invocation --command-id $CID \
+            --instance-id ${{ secrets.EC2_INSTANCE_ID }} \
+            --query '[Status,StandardOutputContent,StandardErrorContent]' --output text
