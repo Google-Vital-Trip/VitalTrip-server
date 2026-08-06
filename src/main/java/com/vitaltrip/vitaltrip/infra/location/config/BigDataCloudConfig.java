@@ -10,14 +10,12 @@ import org.springframework.web.client.RestClient;
 @RequiredArgsConstructor
 public class BigDataCloudConfig {
 
-    private static final String BIG_DATA_CLOUD_BASE_URL = "https://api.bigdatacloud.net";
-
     @Bean
     @Qualifier("bigDataCloudRestClient")
-    public RestClient bigDataCloudRestClient(RestClient.Builder baseRestClientBuilder) {
+    public RestClient bigDataCloudRestClient(RestClient.Builder baseRestClientBuilder, BigDataCloudProperties properties) {
         return baseRestClientBuilder
-            .baseUrl(BIG_DATA_CLOUD_BASE_URL)
-            .defaultHeader("Content-Type", "application/json")
-            .build();
+                .baseUrl(properties.baseUrl())
+                .defaultHeader("Content-Type", "application/json")
+                .build();
     }
 }

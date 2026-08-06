@@ -4,3 +4,7 @@ google:
       base-url: https://places.googleapis.com/v1
       api-key: ${GOOGLE_PLACES_API_KEY}
       default-field-mask: places.displayName,places.formattedAddress,places.location,places.nationalPhoneNumber,places.currentOpeningHours,places.websiteUri
+
+bigdatacloud:
+  api:
+    base-url: ${BIG_DATA_CLOUD_BASE_URL:https://api.bigdatacloud.net}
