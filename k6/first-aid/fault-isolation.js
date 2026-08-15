@@ -1,6 +1,6 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
-import { Trend, Counter } from 'k6/metrics';
+import { Trend, Rate, Counter } from 'k6/metrics';
 
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:8080';
 const MGMT_URL = __ENV.MGMT_URL || 'http://localhost:9090';
@@ -35,6 +35,9 @@ const GEMINI_STUB_TEXT = [
 ].join('\n');
 
 const tomcatBusyThreads = new Trend('tomcat_busy_threads');
+const circuitOpenRate = new Rate('circuit_open_rate');
+const fallbackRate = new Rate('fallback_rate');
+const recoveryLag = new Trend('recovery_lag_ms');
 const stubMiss = new Counter('stub_miss');
 
 export const options = {
@@ -167,7 +170,23 @@ export function requestFirstAid(data) {
         stubMiss.add(1);
     }
 
-    check(res, { 'status is 200': (r) => r.status === 200 }, { phase });
+    const servedByFallback =
+        res.status === 200 && res.json('data.aiAvailable') === false;
+    fallbackRate.add(servedByFallback, { phase });
+
+    check(
+        res,
+        {
+            'status is 200': (r) => r.status === 200,
+            'actionable response': (r) => {
+                const data = r.json('data');
+                return data.aiAvailable === true
+                    ? data.content !== null
+                    : data.identificationResponse.emergencyContact !== null;
+            },
+        },
+        { phase }
+    );
 }
 
 export function probeUnrelatedEndpoint(data) {
@@ -175,6 +194,9 @@ export function probeUnrelatedEndpoint(data) {
     const res = http.get(`${BASE_URL}/`, { timeout: '30s', tags: { phase } });
     check(res, { 'canary alive': (r) => r.status === 200 });
 }
+
+let lastCircuitState = null;
+let circuitOpenedAt = null;
 
 export function observeServerState(data) {
     const elapsedSec = Math.round((Date.now() - data.startedAt) / 1000);
@@ -189,7 +211,40 @@ export function observeServerState(data) {
         tomcatBusyThreads.add(busyThreads);
     }
 
-    console.log(`t=${elapsedSec}s phase=${phaseAt(elapsedSec)} busy=${busyThreads}`);
+    const circuitRes = http.get(`${MGMT_URL}/actuator/circuitbreakers`, {
+        tags: { name: 'monitor' },
+    });
+
+    let circuitState = 'N/A';
+    if (circuitRes.status === 200) {
+        circuitState = circuitRes.json('circuitBreakers.gemini.state') || 'UNKNOWN';
+        circuitOpenRate.add(circuitState === 'OPEN' || circuitState === 'FORCED_OPEN');
+
+        if (circuitState !== lastCircuitState) {
+            console.log(`[circuit] ${lastCircuitState} -> ${circuitState} (t=${elapsedSec}s)`);
+
+            if (circuitState === 'OPEN' && circuitOpenedAt === null) {
+                circuitOpenedAt = Date.now();
+            }
+
+            if (
+                circuitState === 'CLOSED' &&
+                circuitOpenedAt !== null &&
+                elapsedSec > DEGRADE_END_SEC
+            ) {
+                const lagMs = Date.now() - (data.startedAt + DEGRADE_END_SEC * 1000);
+                recoveryLag.add(lagMs);
+                console.log(`[circuit] recovered in ${Math.round(lagMs / 1000)}s`);
+                circuitOpenedAt = null;
+            }
+
+            lastCircuitState = circuitState;
+        }
+    }
+
+    console.log(
+        `t=${elapsedSec}s phase=${phaseAt(elapsedSec)} busy=${busyThreads} circuit=${circuitState}`
+    );
 }
 
 export function teardown() {
