@@ -28,4 +28,5 @@ public class RestClientConfig {
     public RestClient defaultRestClient(RestClient.Builder baseRestClientBuilder) {
         return baseRestClientBuilder.build();
     }
+
 }
