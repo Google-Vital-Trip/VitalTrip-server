@@ -1,0 +1,33 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "POST",
+    "urlPathPattern": "/v1beta/models/[^/]+:generateContent"
+  },
+  "response": {
+    "status": 200,
+    "fixedDelayMilliseconds": 4000,
+    "headers": { "Content-Type": "application/json" },
+    "jsonBody": {
+      "candidates": [
+        {
+          "content": {
+            "role": "model",
+            "parts": [
+              {
+                "text": "CONTENT:\nMove away from the heat source immediately\nCool the burn with cool running water for 10-15 minutes\nDo not apply ice directly to the burned area\nApply a loose sterile gauze bandage\nCall emergency services if the burn is severe or you are unsure\n\nSUMMARY:\nImmediate cooling and proper burn care are essential to prevent further tissue damage.\n\nRECOMMENDED_ACTION:\nCall emergency services immediately and cool the burn with running water\n\nDISCLAIMER:\nThis is temporary AI first aid advice. Please consult a medical professional as soon as possible."
+              }
+            ]
+          },
+          "finishReason": "STOP",
+          "index": 0
+        }
+      ],
+      "usageMetadata": {
+        "promptTokenCount": 1450,
+        "candidatesTokenCount": 210,
+        "totalTokenCount": 1660
+      }
+    }
+  }
+}
