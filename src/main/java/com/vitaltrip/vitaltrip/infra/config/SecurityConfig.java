@@ -7,8 +7,10 @@ import com.vitaltrip.vitaltrip.presentation.auth.handler.SimpleOAuth2SuccessHand
 import java.util.Arrays;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -31,6 +33,17 @@ public class SecurityConfig {
     private final FirstAidAuthenticationFilter firstAidAuthenticationFilter;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final SimpleOAuth2SuccessHandler oAuth2SuccessHandler;
+
+    @Bean
+    @Order(0)
+    @Profile("loadtest")
+    public SecurityFilterChain actuatorFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .securityMatcher(EndpointRequest.toAnyEndpoint())
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .build();
+    }
 
     @Bean
     @Order(1)

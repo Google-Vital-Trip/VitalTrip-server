@@ -1,0 +1,66 @@
+name: vitaltrip-loadtest
+
+services:
+  stub:
+    image: wiremock/wiremock:3.9.1
+    volumes:
+      - ./k6/wiremock:/home/wiremock
+    command: [
+      "--async-response-enabled",
+      "--async-response-threads", "500",
+      "--container-threads", "1000",
+      "--no-request-journal"
+    ]
+    environment:
+      JAVA_OPTS: "-Xmx1g"
+    ports:
+      - "8090:8080"
+
+  db:
+    image: mysql:8.0
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --skip-performance-schema
+      --innodb-buffer-pool-size=128M
+    environment:
+      MYSQL_ROOT_PASSWORD: loadtest
+      MYSQL_DATABASE: vitaltrip
+      TZ: Asia/Seoul
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -ploadtest --silent" ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+      stub:
+        condition: service_started
+
+    environment:
+      SPRING_PROFILES_ACTIVE: loadtest
+      JAVA_TOOL_OPTIONS: "-Xmx700m -Duser.timezone=Asia/Seoul"
+
+      GEMINI_BASE_URL: http://stub:8080/v1beta/models
+      GEMINI_API_KEY: dummy
+      GEMINI_MODEL: gemini-3.5-flash
+      BIG_DATA_CLOUD_BASE_URL: http://stub:8080
+
+      GOOGLE_PLACES_API_KEY: dummy
+      NEWS_API_KEY: dummy
+      JWT_SECRET: loadtest-secret-key-must-be-at-least-32-bytes-long
+
+      DB_HOST: db
+      DB_NAME: vitaltrip
+      DB_USERNAME: root
+      DB_PASSWORD: loadtest
+      MYSQL_ROOT_PASSWORD: loadtest
+
+    ports:
+      - "8080:8080"
+      - "9090:9090"

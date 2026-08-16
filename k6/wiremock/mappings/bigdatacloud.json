@@ -1,0 +1,21 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/data/reverse-geocode-client"
+  },
+  "response": {
+    "status": 200,
+    "fixedDelayMilliseconds": 300,
+    "headers": { "Content-Type": "application/json" },
+    "jsonBody": {
+      "countryName": "South Korea",
+      "countryCode": "KR",
+      "principalSubdivision": "Seoul",
+      "locality": "Jung-gu",
+      "latitude": 37.5665,
+      "longitude": 126.978,
+      "localityLanguageRequested": "en"
+    }
+  }
+}

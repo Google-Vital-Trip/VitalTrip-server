@@ -1,0 +1,12 @@
+{
+  "priority": 99,
+  "request": {
+    "method": "ANY",
+    "urlPattern": ".*"
+  },
+  "response": {
+    "status": 599,
+    "headers": { "Content-Type": "text/plain" },
+    "body": "STUB_MISS"
+  }
+}
