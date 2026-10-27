@@ -5,79 +5,99 @@
 id: CHEST_PAIN
 version: 1
 
+title:
+  ko: 가슴 통증
+  en: Chest pain
+
 keyAction:
   ko: 심장마비가 의심되는 증상을 알아차리고 바로 {emergencyNumber}에 전화하세요.
   en: ""
 
 steps:
-  - text:
+  - id: sit-and-rest
+    text:
       ko: 편하게 앉히고 움직이지 않게 하세요.
       en: ""
     source: ifrc2025-chest-pain
-  - text:
+  - id: recognize-signs
+    text:
       ko: "심장마비를 의심할 신호: 가슴을 조이거나 누르거나 타는 듯한 통증, 팔·어깨·턱·윗배·날개뼈 사이로 퍼지는 통증, 식은땀, 두근거림, 숨참, 메스꺼움, 창백한 얼굴. 통증이 몇 분 넘게 계속되거나 왔다 갔다 할 수도 있어요."
       en: ""
     source: ifrc2025-chest-pain
-  - text:
+  - id: atypical-signs
+    text:
       ko: 여성, 노인, 당뇨가 있는 사람은 증상이 애매하게 나타날 수 있어요. 심장병 진단을 받은 적이 없어도 심장마비는 올 수 있어요.
       en: ""
     source: ifrc2025-chest-pain
-  - text:
+  - id: call-ems
+    text:
       ko: 심장마비가 의심되면 몇 분밖에 안 아팠더라도 바로 {emergencyNumber}에 전화하세요.
       en: ""
     source: ifrc2025-chest-pain
-  - text:
+  - id: get-aed
+    text:
       ko: 근처에 자동심장충격기(AED)가 있으면 다른 사람에게 가져다 달라고 해서 곁에 두세요.
       en: ""
     source: ifrc2025-chest-pain
-  - text:
+  - id: reassure-monitor
+    text:
       ko: 구급대가 올 때까지 안심시키고, 숨과 반응을 계속 지켜보세요.
       en: ""
     source: ifrc2025-chest-pain
 
 branches:
-  - condition:
+  - id: angina
+    condition:
       ko: 협심증 진단을 받았고 약을 가지고 있다면
       en: ""
     steps:
-      - text:
+      - id: take-prescribed-medicine
+        text:
           ko: 평소 처방받은 약을 먹도록 도와주세요.
           en: ""
         source: ifrc2025-chest-pain
-      - text:
+      - id: call-if-not-easing
+        text:
           ko: 협심증 통증은 보통 약을 먹고 쉬면 몇 분 안에 가라앉아요. 가라앉지 않으면 심장마비일 수 있으니 바로 {emergencyNumber}에 전화하세요.
           en: ""
         source: ifrc2025-chest-pain
 
-  - condition:
+  - id: arrest
+    condition:
       ko: 의식을 잃고 숨을 쉬지 않거나 이상하게 쉰다면
       en: ""
     steps:
-      - text:
+      - id: start-cpr
+        text:
           ko: 바로 심폐소생술을 시작하고, 구급대에 상태가 바뀌었다고 다시 알리세요.
           en: ""
         source: ifrc2025-chest-pain
 
 donts:
-  - text:
+  - id: no-exertion
+    text:
       ko: 걸어서 병원에 가게 하는 등 몸을 쓰게 하지 마세요.
       en: ""
     source: ifrc2025-chest-pain
-  - text:
+  - id: no-assuming-indigestion
+    text:
       ko: 체한 것으로 여기고 지켜보기만 하지 마세요. 심장마비는 소화불량으로 자주 착각돼요.
       en: ""
     source: ifrc2025-chest-pain
 
 accessHelp:
-  - text:
+  - id: help-say-heart-attack
+    text:
       ko: 통화할 때 "심장마비가 의심된다"고 분명히 말하세요. 쓰러지거나 숨을 멈추는 등 상태가 바뀌면 다시 알리세요.
       en: ""
     source: ifrc2025-chest-pain
-  - text:
+  - id: help-danger-signs
+    text:
       ko: "다음 중 하나라도 있으면 바로 {emergencyNumber}에 전화하세요: 통증이 심할 때, 숨이 찰 때, 얼굴이 창백하고 식은땀이 날 때, 입술·귀·손가락이 파래질 때, 턱이나 이가 욱신거릴 때"
       en: ""
     source: ifrc2025-chest-pain
-  - text:
+  - id: help-antacid-no-relief
+    text:
       ko: 소화제를 먹었는데도 통증이 가라앉지 않으면 {emergencyNumber}에 전화하세요.
       en: ""
     source: ifrc2025-chest-pain

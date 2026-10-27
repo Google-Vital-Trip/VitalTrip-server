@@ -1,105 +1,131 @@
 id: CHOKING
 version: 1
 
+title:
+  ko: 질식
+  en: Choking
+
 keyAction:
   ko: 목에 걸린 것을 빼내 숨을 쉴 수 있게 하세요.
   en: ""
 
 steps:
-  - text:
+  - id: ask-if-choking
+    text:
       ko: 음식 등을 먹다가 갑자기 괴로워하면 "목에 뭐가 걸렸어요?"라고 물어보세요.
       en: ""
     source: ifrc2025-choking
-  - text:
+  - id: assess-severity
+    text:
       ko: 기침을 하거나 말을 할 수 있으면 일부만 막힌 거예요. 기침도, 말도, 숨도 못 하고 목을 움켜쥐거나 입술이 파래지면 완전히 막힌 거예요.
       en: ""
     source: ifrc2025-choking
 
 branches:
-  - condition:
+  - id: partial
+    condition:
       ko: 기침을 하거나 말을 할 수 있다면 (일부 막힘)
       en: ""
     steps:
-      - text:
+      - id: encourage-cough
+        text:
           ko: 계속 세게 기침하도록 격려하세요. 스스로 기침해서 빼내는 게 가장 효과적이라 등을 두드리거나 배를 밀지 마세요.
           en: ""
         source: ifrc2025-choking
-      - text:
+      - id: stay-and-watch
+        text:
           ko: 나아질 때까지 곁에서 지켜보세요. 언제든 완전히 막힐 수 있어요.
           en: ""
         source: ifrc2025-choking
 
-  - condition:
+  - id: infant
+    condition:
       ko: 1세 미만 아기가 기침도, 울음도, 숨도 못 한다면
       en: ""
     steps:
-      - text:
+      - id: back-blows
+        text:
           ko: 아기를 엎드리게 해서 팔 위에 올리고, 머리가 몸보다 낮게 받친 채 양쪽 날개뼈 사이를 손바닥으로 세게 5번까지 두드리세요.
           en: ""
         source: ifrc2025-choking
-      - text:
+      - id: chest-thrusts
+        text:
           ko: 빠지지 않으면 아기를 뒤집어 무릎 위에 눕히고, 두 엄지로 가슴 한가운데를 감싸듯 눌러 세게 5번까지 밀어 올리세요.
           en: ""
         source: ifrc2025-choking
-      - text:
+      - id: call-ems
+        text:
           ko: 그래도 빠지지 않으면 바로 {emergencyNumber}에 전화하세요.
           en: ""
         source: ifrc2025-choking
-      - text:
+      - id: alternate-until-clear
+        text:
           ko: 등 두드리기 5번과 가슴 밀기 5번을 걸린 것이 빠지거나 아기가 의식을 잃을 때까지 번갈아 반복하세요.
           en: ""
         source: ifrc2025-choking
 
-  - condition:
+  - id: adult-complete
+    condition:
       ko: 1세 이상 아이나 어른이 기침도, 말도, 숨도 못 한다면
       en: ""
     steps:
-      - text:
+      - id: back-blows
+        text:
           ko: 몸을 앞으로 숙이게 하고, 양쪽 날개뼈 사이를 손바닥으로 세게 5번까지 두드리세요.
           en: ""
         source: ifrc2025-choking
-      - text:
+      - id: abdominal-thrusts
+        text:
           ko: 빠지지 않으면 뒤에서 허리를 감싸 안고, 주먹을 배꼽과 갈비뼈 사이에 댄 뒤 다른 손으로 감싸 안쪽 위로 세게 5번까지 당기세요.
           en: ""
         source: ifrc2025-choking
-      - text:
+      - id: call-ems
+        text:
           ko: 그래도 빠지지 않으면 바로 {emergencyNumber}에 전화하세요.
           en: ""
         source: ifrc2025-choking
-      - text:
+      - id: alternate-until-clear
+        text:
           ko: 등 두드리기 5번과 배 밀어 올리기 5번을 걸린 것이 빠지거나 의식을 잃을 때까지 번갈아 반복하세요.
           en: ""
         source: ifrc2025-choking
 
-  - condition:
+  - id: unconscious
+    condition:
       ko: 의식을 잃었다면
       en: ""
     steps:
-      - text:
+      - id: lay-down-cpr
+        text:
           ko: 바닥에 반듯이 눕히고 {emergencyNumber}에 전화한 뒤, 바로 심폐소생술(가슴 압박과 인공호흡)을 시작하세요.
           en: ""
         source: ifrc2025-choking
-      - text:
+      - id: remove-visible-object
+        text:
           ko: 입안에 걸린 것이 눈에 보일 때만 손가락으로 꺼내세요.
           en: ""
         source: ifrc2025-choking
 
 donts:
-  - text:
+  - id: no-blind-finger-sweep
+    text:
       ko: 보이지 않는데 손가락을 입안에 넣어 휘젓지 마세요. 걸린 것을 더 깊이 밀어 넣을 수 있어요.
       en: ""
     source: ifrc2025-choking
-  - text:
+  - id: no-blows-if-coughing
+    text:
       ko: 기침을 할 수 있는 사람의 등을 두드리거나 배를 밀지 마세요.
       en: ""
     source: ifrc2025-choking
 
 accessHelp:
-  - text:
+  - id: help-after-complete-choking
+    text:
       ko: 완전히 막혔던 경우에는 빠져서 괜찮아 보여도 반드시 진료를 받으세요. 배 밀어 올리기로 내부를 다쳤거나, 조각이 폐로 들어갔을 수 있어요.
       en: ""
     source: ifrc2025-choking
-  - text:
+  - id: help-persistent-symptoms
+    text:
       ko: 일부만 막혔던 경우라도 기침이 계속되거나, 삼키기 힘들거나, 아직 뭔가 걸린 느낌이 들면 진료를 받으세요.
       en: ""
     source: ifrc2025-choking

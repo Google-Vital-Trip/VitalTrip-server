@@ -6,101 +6,126 @@
 id: POISONING
 version: 1
 
+title:
+  ko: 중독
+  en: Poisoning
+
 keyAction:
   ko: 무엇을, 얼마나, 언제 접했는지 빨리 파악하고 중독센터나 {emergencyNumber}에 연락하세요.
   en: ""
 
 steps:
-  - text:
+  - id: stop-exposure
+    text:
       ko: 독성 물질에 더 노출되지 않게 하세요. 가스를 들이마셨다면 당신이 안전할 때만 그 장소에서 데리고 나오세요. 일산화탄소는 냄새도 색도 없어요.
       en: ""
     source: ifrc2025-poison
-  - text:
+  - id: identify-substance
+    text:
       ko: 무엇을, 얼마나, 언제(또는 얼마 동안) 접했는지 알아보세요. 포장이나 용기는 안전할 때만 만지고, 아니면 구급대를 기다리세요.
       en: ""
     source: ifrc2025-poison
-  - text:
+  - id: contact-poison-center
+    text:
       ko: 중독센터나 {emergencyNumber}에 연락해 알아낸 내용을 모두 알리고 안내를 따르세요.
       en: ""
     source: ifrc2025-poison
-  - text:
+  - id: lay-left-side
+    text:
       ko: 가능하면 왼쪽으로 편하게 눕히고, 숨쉬기와 반응에 변화가 없는지 지켜보세요.
       en: ""
     source: ifrc2025-poison
-  - text:
+  - id: collect-containers
+    text:
       ko: 약병, 포장, 용기 등 라벨이 붙은 것은 모두 모아 구급대에 전해 주세요.
       en: ""
     source: ifrc2025-poison
 
 branches:
-  - condition:
+  - id: unconscious
+    condition:
       ko: 의식을 잃었거나 숨쉬기 힘들어한다면
       en: ""
     steps:
-      - text:
+      - id: call-ems
+        text:
           ko: 바로 {emergencyNumber}에 전화하세요.
           en: ""
         source: ifrc2025-poison
-      - text:
+      - id: open-airway
+        text:
           ko: 이마를 뒤로 젖히고 턱을 들어 숨길을 연 뒤, 숨을 쉬는지 확인하세요.
           en: ""
         source: ifrc2025-poison
-      - text:
+      - id: compressions-only
+        text:
           ko: 심폐소생술이 필요한데 입이나 입 주변에 독성 물질이 있을 수 있다면, 인공호흡 없이 가슴 압박만 하세요.
           en: ""
         source: ifrc2025-poison
 
-  - condition:
+  - id: mouth-residue
+    condition:
       ko: 의식이 있고 입안에 독성 액체가 남아 있다면
       en: ""
     steps:
-      - text:
+      - id: rinse-and-spit
+        text:
           ko: 물로 입을 헹군 뒤 뱉어 내게 하세요.
           en: ""
         source: ifrc2025-poison
 
-  - condition:
+  - id: vomiting
+    condition:
       ko: 누워 있다가 토한다면
       en: ""
     steps:
-      - text:
+      - id: turn-on-side
+        text:
           ko: 토사물에 숨이 막히지 않도록 몸을 옆으로 돌려 주세요.
           en: ""
         source: ifrc2025-poison
 
-  - condition:
+  - id: button-battery
+    condition:
       ko: 단추형(동전형) 배터리를 삼켰다면
       en: ""
     steps:
-      - text:
+      - id: treat-as-poisoning
+        text:
           ko: 배터리 속 화학물질이 몸 안으로 샐 수 있어요. 중독과 똑같이 다루고 중독센터나 {emergencyNumber}에 연락하세요.
           en: ""
         source: ifrc2025-poison
 
 donts:
-  - text:
+  - id: no-induced-vomiting
+    text:
       ko: 토하게 하지 마세요. 목이 손상될 수 있어요.
       en: ""
     source: ifrc2025-poison
-  - text:
+  - id: no-milk-water-charcoal
+    text:
       ko: 중독센터나 전문가가 지시하지 않았다면 우유, 물, 숯 등을 먹이지 마세요.
       en: ""
     source: ifrc2025-poison
-  - text:
+  - id: no-ignition-sources
+    text:
       ko: 가스가 찼을 수 있는 방에서는 불을 켜거나, 전기 기기를 쓰거나, 담배를 피우지 마세요.
       en: ""
     source: ifrc2025-poison
 
 accessHelp:
-  - text:
+  - id: help-life-threatening
+    text:
       ko: 의식을 잃었거나 숨쉬기 힘들어하는 등 생명이 위험해 보이면 바로 {emergencyNumber}에 전화하세요.
       en: ""
     source: ifrc2025-poison
-  - text:
+  - id: help-even-if-mild
+    text:
       ko: 증상이 심하지 않아도 중독센터나 {emergencyNumber}에 연락해 안내를 따르세요.
       en: ""
     source: ifrc2025-poison
-  - text:
+  - id: help-share-details
+    text:
       ko: 독성 물질의 종류, 양, 시간 등 아는 것을 최대한 많이 알려 주세요. 그래야 가장 알맞은 도움을 받을 수 있어요.
       en: ""
     source: ifrc2025-poison

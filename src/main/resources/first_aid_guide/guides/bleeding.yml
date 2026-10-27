@@ -8,116 +8,145 @@
 id: BLEEDING
 version: 1
 
+title:
+  ko: 출혈
+  en: Bleeding
+
 keyAction:
   ko: 상처를 손으로 직접 눌러 최대한 빨리 피를 멈추세요.
   en: ""
 
 steps:
-  - text:
+  - id: check-severity
+    text:
       ko: 피가 얼마나 나는지 먼저 보세요. 피가 계속 흐르거나 뿜어져 나오면 심한 출혈이에요. 한 컵 정도의 피도 빨리 멈추지 않으면 상태가 급격히 나빠질 수 있어요.
       en: ""
     source: ifrc2025-bleeding
 
 branches:
-  - condition:
+  - id: severe
+    condition:
       ko: 피가 계속 흐르거나 뿜어져 나온다면 (심한 출혈)
       en: ""
     steps:
-      - text:
+      - id: self-press
+        text:
           ko: 다친 사람이 할 수 있다면 직접 상처를 손으로 누르게 하세요.
           en: ""
         source: ifrc2025-bleeding
-      - text:
+      - id: protect-hands
+        text:
           ko: 돕는 사람은 장갑을 끼거나 비닐봉지, 천 등으로 손을 감싸 피가 직접 닿지 않게 하세요.
           en: ""
         source: ifrc2025-bleeding
-      - text:
+      - id: lay-down-call-ems
+        text:
           ko: 다친 사람을 눕히고 {emergencyNumber}에 전화하세요.
           en: ""
         source: ifrc2025-bleeding
-      - text:
+      - id: press-with-cloth
+        text:
           ko: 깨끗한 천을 상처에 대고 손으로 세게 직접 누르세요. 천이 피에 젖으면 떼지 말고 그 위에 하나 더 대고 더 세게 누르세요.
           en: ""
         source: ifrc2025-bleeding
-      - text:
+      - id: keep-warm
+        text:
           ko: 피를 많이 흘리면 쇼크가 올 수 있어요. 편한 자세를 유지하게 하고 옷이나 담요로 감싸 따뜻하게 해 주세요.
           en: ""
         source: ifrc2025-bleeding
-      - text:
+      - id: bandage-after
+        text:
           ko: 피가 멈추면 붕대나 깨끗한 천으로 상처를 감싸 주세요.
           en: ""
         source: ifrc2025-bleeding
-      - text:
+      - id: open-airway
+        text:
           ko: 의식을 잃으면 피를 멈춘 뒤 이마를 뒤로 젖히고 턱을 들어 숨길을 열고, 숨을 쉬는지 확인하세요.
           en: ""
         source: ifrc2025-bleeding
 
-  - condition:
+  - id: uncontrolled-limb
+    condition:
       ko: 세게 계속 눌러도 피가 멈추지 않고, 팔이나 다리의 상처라면
       en: ""
     steps:
-      - text:
+      - id: press-harder
+        text:
           ko: 더 큰 힘으로 멈추지 말고 계속 누르세요.
           en: ""
         source: ifrc2025-bleeding
-      - text:
+      - id: tourniquet
+        text:
           ko: 제품으로 된 지혈대가 있으면 감고 피가 멈출 만큼 충분히 조이세요. 한 번 감은 지혈대는 구급대가 올 때까지 풀지 마세요.
           en: ""
         source: ifrc2025-bleeding
 
-  - condition:
+  - id: minor
+    condition:
       ko: 베이거나 긁힌 작은 상처라면
       en: ""
     steps:
-      - text:
+      - id: press-to-stop
+        text:
           ko: 피가 나면 먼저 눌러서 멈추세요.
           en: ""
         source: ifrc2025-cuts
-      - text:
+      - id: rinse-wound
+        text:
           ko: 깨끗한 물로 상처를 씻으세요. 가능하면 미지근한 수돗물을 흘려서 씻는 게 가장 좋아요. 수돗물이 없으면 새 생수병에 작은 구멍을 뚫어 물줄기로 씻으세요.
           en: ""
         source: ifrc2025-cuts
-      - text:
+      - id: rinse-alternatives
+        text:
           ko: 깨끗한 물이 없다면 식염수나 포비돈 요오드(빨간약)로 씻어도 돼요.
           en: ""
         source: ifrc2025-cuts
-      - text:
+      - id: remove-debris
+        text:
           ko: 상처에 남은 흙이나 이물질은 흐르는 물과 깨끗한 거즈로 닦아 내세요.
           en: ""
         source: ifrc2025-cuts
-      - text:
+      - id: cover-wound
+        text:
           ko: 상처 주변을 말린 뒤 밴드나 드레싱으로 덮어 주세요.
           en: ""
         source: ifrc2025-cuts
 
 donts:
-  - text:
+  - id: no-pressure-points-or-ice
+    text:
       ko: 상처에서 떨어진 곳(지압점)을 누르거나 얼음을 대서 피를 멈추려 하지 마세요.
       en: ""
     source: ifrc2025-bleeding
-  - text:
+  - id: no-removing-object
+    text:
       ko: 상처에 칼이나 유리 같은 물건이 박혀 있으면 빼지 마세요. 물건이 움직이지 않게 그 주변을 눌러 주세요.
       en: ""
     source: ifrc2025-bleeding
-  - text:
+  - id: no-alcohol-or-peroxide
+    text:
       ko: 소독용 알코올이나 과산화수소로 상처를 씻지 마세요. 도움보다 해와 통증이 더 커요.
       en: ""
     source: ifrc2025-cuts
-  - text:
+  - id: no-covering-infected
+    text:
       ko: 감염된 것 같은 상처는 덮어 두지 말고 진료를 받으세요.
       en: ""
     source: ifrc2025-cuts
 
 accessHelp:
-  - text:
+  - id: help-severe-always
+    text:
       ko: 심한 출혈은 항상 {emergencyNumber}에 전화하세요. 통화할 때 어떻게 다쳤는지와 지금 상태를 분명히 말하세요.
       en: ""
     source: ifrc2025-bleeding
-  - text:
+  - id: help-tetanus
+    text:
       ko: 파상풍 주사를 맞은 지 오래됐다면 진료를 받으세요. 더러운 상처는 5년, 깨끗한 상처는 보통 10년이 기준이에요.
       en: ""
     source: ifrc2025-cuts
-  - text:
+  - id: help-infection-signs
+    text:
       ko: 상처 주변이 붉거나 검붉게 변하고 뜨겁고 아프거나, 열이 나면 감염 신호예요. 진료를 받으세요.
       en: ""
     source: ifrc2025-cuts

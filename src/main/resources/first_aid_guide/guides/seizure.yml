@@ -1,101 +1,126 @@
 id: SEIZURE
 version: 1
 
+title:
+  ko: 경련
+  en: Seizure
+
 keyAction:
   ko: 경련하는 동안 다치지 않도록 보호하세요.
   en: ""
 
 steps:
-  - text:
+  - id: clear-surroundings
+    text:
       ko: 주변에 부딪힐 만한 물건을 치우세요. 차도처럼 바로 위험한 곳이 아니라면 몸을 옮기지 마세요.
       en: ""
     source: ifrc2025-seizure
-  - text:
+  - id: cushion-head
+    text:
       ko: 머리 밑에 쿠션이나 접은 옷을 받쳐 주세요. 안경을 벗기고 목 주변의 조이는 옷을 풀어 주세요.
       en: ""
     source: ifrc2025-seizure
-  - text:
+  - id: record-time
+    text:
       ko: 경련이 시작되고 끝난 시각, 다시 일어나는지를 기록해 두세요. 구급대에 알려야 할 정보예요.
       en: ""
     source: ifrc2025-seizure
-  - text:
+  - id: check-medical-id
+    text:
       ko: 모르는 사람이라면 질환 정보가 적힌 의료 팔찌나 목걸이를 하고 있는지 확인하세요.
       en: ""
     source: ifrc2025-seizure
-  - text:
+  - id: protect-dignity
+    text:
       ko: 주변 사람들에게 자리를 비켜 달라고 하고, 소변을 지렸다면 덮어 주어 그 사람의 존엄을 지켜 주세요.
       en: ""
     source: ifrc2025-seizure
-  - text:
+  - id: check-breathing
+    text:
       ko: 경련이 끝나면 숨을 쉬는지 확인하고, 그 뒤로도 계속 확인하세요. 머리 밑 받침이 숨쉬기를 방해하면 치우세요.
       en: ""
     source: ifrc2025-seizure
 
 branches:
-  - condition:
+  - id: breathing-normal
+    condition:
       ko: 경련이 끝나고 숨을 정상적으로 쉰다면
       en: ""
     steps:
-      - text:
+      - id: recovery-position
+        text:
           ko: 몸을 옆으로 돌려 눕히고 숨길이 열려 있게 하세요.
           en: ""
         source: ifrc2025-seizure
-      - text:
+      - id: stay-until-recovered
+        text:
           ko: 원래 상태로 돌아올 때까지 곁에 있어 주세요. 깨어난 뒤 혼란스러워하거나 공격적일 수 있으니, 자신의 안전에 주의하고 몸을 지나치게 만지지 마세요.
           en: ""
         source: ifrc2025-seizure
 
-  - condition:
+  - id: not-breathing
+    condition:
       ko: 경련이 끝났는데 숨을 쉬지 않거나 이상하게 쉰다면
       en: ""
     steps:
-      - text:
+      - id: call-ems-cpr
+        text:
           ko: 바로 {emergencyNumber}에 전화하고 심폐소생술을 시작하세요.
           en: ""
         source: ifrc2025-seizure
 
-  - condition:
+  - id: child
+    condition:
       ko: 아기나 어린아이라면
       en: ""
     steps:
-      - text:
+      - id: check-temperature
+        text:
           ko: 위 단계와 함께 체온을 확인하세요. 몸이 뜨거우면 겉옷을 벗기고 시원한 바람을 쐬어 주세요.
           en: ""
         source: ifrc2025-seizure
 
-  - condition:
+  - id: has-medication
+    condition:
       ko: 보호자가 경련약을 가지고 있다면
       en: ""
     steps:
-      - text:
+      - id: assist-medication
+        text:
           ko: 보호자가 약을 쓰도록 도와주세요. 먹는 약, 코 스프레이, 주사 등 여러 형태가 있어요. 부담스럽다면 하지 않아도 돼요.
           en: ""
         source: ifrc2025-seizure
 
 donts:
-  - text:
+  - id: no-objects-in-mouth
+    text:
       ko: 입에 손가락이나 수건 등 아무것도 넣지 마세요.
       en: ""
     source: ifrc2025-seizure
-  - text:
+  - id: no-restraining
+    text:
       ko: 경련하는 몸을 붙잡거나 억누르지 마세요.
       en: ""
     source: ifrc2025-seizure
 
 accessHelp:
-  - text:
+  - id: help-over-5min
+    text:
       ko: 경련이 5분 넘게 계속되면 매우 위험한 상태예요. 바로 {emergencyNumber}에 전화하세요.
       en: ""
     source: ifrc2025-seizure
-  - text:
+  - id: help-call-conditions
+    text:
       ko: "다음 중 하나라도 해당하면 {emergencyNumber}에 전화하세요: 다쳤을 때, 처음 겪는 경련일 때, 경련이 끝나도 의식이 돌아오지 않을 때, 평소와 다르거나 반복되거나 잦아졌을 때, 당뇨가 있거나 임신 중이거나 최근 출산했을 때, 고열이 있을 때, 술이나 약물에 취한 상태일 때"
       en: ""
     source: ifrc2025-seizure
-  - text:
+  - id: help-if-unsure
+    text:
       ko: 판단이 서지 않으면 전화하세요.
       en: ""
     source: ifrc2025-seizure
-  - text:
+  - id: help-respect-wishes
+    text:
       ko: 뇌전증이 있는 사람은 스스로 관리하길 원해 신고를 원하지 않을 수 있어요. 가족이나 동행인이 있다면 그 사람이 상태를 더 잘 아니까 그 말을 따르세요.
       en: ""
     source: ifrc2025-seizure

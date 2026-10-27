@@ -1,34 +1,43 @@
 id:
 version: 1
 
+title:
+  ko: ""
+  en: ""
+
 keyAction:
   ko: ""
   en: ""
 
 steps:
-  - text:
+  - id: ""
+    text:
       ko: ""
       en: ""
     source: ""
 
 branches:
-  - condition:
+  - id: ""
+    condition:
       ko: ""
       en: ""
     steps:
-      - text:
+      - id: ""
+        text:
           ko: ""
           en: ""
         source: ""
 
 donts:
-  - text:
+  - id: ""
+    text:
       ko: ""
       en: ""
     source: ""
 
 accessHelp:
-  - text:
+  - id: ""
+    text:
       ko: ""
       en: ""
     source: ""

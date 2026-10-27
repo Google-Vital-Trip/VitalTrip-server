@@ -6,84 +6,105 @@
 id: HEATSTROKE
 version: 1
 
+title:
+  ko: 열사병·열탈진
+  en: Heatstroke and heat exhaustion
+
 keyAction:
   ko: 몸을 빠르게 식혀 체온을 낮추세요.
   en: ""
 
 steps:
-  - text:
+  - id: stop-and-cool-place
+    text:
       ko: 하던 활동을 바로 멈추게 하고, 시원한 곳으로 옮겨 쉬게 하세요. 겉옷 등 불필요한 옷은 벗겨 주세요.
       en: ""
     source: ifrc2025-heat
 
 branches:
-  - condition:
+  - id: heatstroke
+    condition:
       ko: 땀이 멈추고 피부가 뜨겁고 건조하며 붉거나, 헷갈려하거나 공격적이거나 졸려하거나, 경련을 하거나 의식이 흐려진다면 (열사병)
       en: ""
     steps:
-      - text:
+      - id: call-ems
+        text:
           ko: 바로 {emergencyNumber}에 전화하세요. 열사병은 생명을 위협해요.
           en: ""
         source: ifrc2025-heat
-      - text:
+      - id: lay-down-undress
+        text:
           ko: 시원한 곳에 눕히고 겉옷을 벗기세요.
           en: ""
         source: ifrc2025-heat
-      - text:
+      - id: immerse-cold-water
+        text:
           ko: 바로 식히기 시작하세요. 목 아래까지 찬물에 15분 정도 담그는 게 가장 효과적이에요. 구급대를 기다리는 동안 빨리 식히는 게 가장 중요해요.
           en: ""
         source: ifrc2025-heat
-      - text:
+      - id: cool-alternatives
+        text:
           ko: 찬물에 담글 수 없다면, 찬물에 적신 시트나 수건으로 덮거나 몸에 찬물을 끼얹고, 목과 사타구니에 얼음팩을 대고, 부채질을 해 주세요.
           en: ""
         source: ifrc2025-heat
-      - text:
+      - id: cool-below-39
+        text:
           ko: 체온계가 있다면 39°C 아래로 떨어질 때까지 식히세요.
           en: ""
         source: ifrc2025-heat
 
-  - condition:
+  - id: exhaustion
+    condition:
       ko: 땀을 많이 흘리고, 피부가 차고 창백하고 축축하며, 목마름·두통·근육 경련·어지러움이 있다면 (열탈진)
       en: ""
     steps:
-      - text:
+      - id: cool-down
+        text:
           ko: 손발을 찬물에 담그거나, 목과 사타구니에 얼음팩을 대거나, 찬물로 샤워하게 하거나, 부채질을 해서 식혀 주세요.
           en: ""
         source: ifrc2025-heat
-      - text:
+      - id: rehydrate
+        text:
           ko: 토하지 않는다면 물, 스포츠음료, 설탕을 넣은 차가운 차를 마시게 하세요.
           en: ""
         source: ifrc2025-heat
-      - text:
+      - id: monitor-temperature
+        text:
           ko: 체온과 반응을 지켜보세요. 체온계가 있다면 39°C 아래로 낮추는 게 목표예요.
           en: ""
         source: ifrc2025-heat
-      - text:
+      - id: call-if-worsening
+        text:
           ko: 열탈진은 보통 진료 없이 회복돼요. 다만 나아지지 않거나 나빠지면, 판단이 서지 않으면 {emergencyNumber}에 전화하세요.
           en: ""
         source: ifrc2025-heat
 
-  - condition:
+  - id: shivering
+    condition:
       ko: 식힌 뒤 춥다고 하거나 떨기 시작한다면
       en: ""
     steps:
-      - text:
+      - id: cover-with-blanket
+        text:
           ko: 젖은 옷 때문일 수 있어요. 담요를 덮어 주세요.
           en: ""
         source: ifrc2025-heat
-      - text:
+      - id: sip-fluids
+        text:
           ko: 수분 보충 음료나 설탕을 넣은 차를 조금씩 마시게 하고, 토하지 않는지 확인한 뒤 더 주세요. 충분히 쉬게 하세요.
           en: ""
         source: ifrc2025-heat
 
 donts:
-  - text:
+  - id: no-forcing-fluids
+    text:
       ko: 토하고 있는 사람에게 억지로 마시게 하지 마세요.
       en: ""
     source: ifrc2025-heat
 
 accessHelp:
-  - text:
+  - id: help-danger-signs
+    text:
       ko: "다음 중 하나라도 해당하면 {emergencyNumber}에 전화하세요: 행동이 이상하거나 헷갈려하거나 의식을 잃을 때, 경련을 할 때, 체온이 39°C를 넘을 때, 땀이 멈췄을 때, 마시면 바로 토할 때"
       en: ""
     source: ifrc2025-heat
