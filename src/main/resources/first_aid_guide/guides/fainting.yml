@@ -1,0 +1,86 @@
+# 원문 중 제외한 권고
+# - 공공장소에서 주변 사람에게 시선을 가려 달라고 해 존엄 보호 (Access help): seizure 존엄 단계 결정 후 반영 여부 판단
+
+id: FAINTING
+version: 1
+
+keyAction:
+  ko: 넘어지지 않게 앉히거나 눕히고, 다리에 힘을 주는 동작으로 뇌로 가는 피를 늘리게 하세요.
+  en: ""
+
+steps:
+  - text:
+      ko: 얼굴이 갑자기 창백해지거나 쓰러질 것 같다고 하면, 넘어지지 않게 바로 앉히거나 바닥에 눕혀 주세요.
+      en: ""
+    source: ifrc2025-faint
+  - text:
+      ko: 쪼그려 앉게 하거나, 다리를 꼬고 다리·배·엉덩이 근육에 힘을 꽉 주게 하세요. 뇌로 가는 피가 늘어 쓰러질 것 같은 느낌이 줄어들어요.
+      en: ""
+    source: ifrc2025-faint
+  - text:
+      ko: 다리로 하기 어렵다면 한 손으로 다른 손을 맞잡고 양쪽으로 당기며 팔에 힘을 줬다 빼게 하세요.
+      en: ""
+    source: ifrc2025-faint
+  - text:
+      ko: 안심시키면서 반응과 숨쉬기에 변화가 없는지 가까이서 지켜보세요.
+      en: ""
+    source: ifrc2025-faint
+  - text:
+      ko: 나아지면 왜 그랬는지 물어보세요(배고픔, 피로, 오래 서 있음 등). 삼킬 수 있으면 물을 주고, 맑은 공기를 쐬게 하세요.
+      en: ""
+    source: ifrc2025-faint
+
+branches:
+  - condition:
+      ko: 힘주는 동작을 할 수 없다면
+      en: ""
+    steps:
+      - text:
+          ko: 바닥에 눕히고 다리를 30~60도 정도 들어 올려 주세요.
+          en: ""
+        source: ifrc2025-faint
+
+  - condition:
+      ko: 쓰러졌다가 바로 깨어났다면
+      en: ""
+    steps:
+      - text:
+          ko: 쓰러지면서 머리를 부딪히거나 다친 곳이 없는지 살펴보세요.
+          en: ""
+        source: ifrc2025-faint
+
+  - condition:
+      ko: 쓰러진 뒤 바로 깨어나지 않는다면
+      en: ""
+    steps:
+      - text:
+          ko: 실신은 보통 곧바로 깨어나요. 깨어나지 않으면 심장마비 같은 더 심각한 문제일 수 있으니 바로 {emergencyNumber}에 전화하고 숨을 쉬는지 확인하세요.
+          en: ""
+        source: ifrc2025-faint
+
+donts:
+  - text:
+      ko: 나아졌다고 바로 일어나 움직이게 하지 마세요. 다시 쓰러질 수 있으니 천천히 활동을 시작하게 하세요.
+      en: ""
+    source: ifrc2025-faint
+
+accessHelp:
+  - text:
+      ko: 가슴 통증이나 두근거림이 함께 있으면 {emergencyNumber}에 전화하세요.
+      en: ""
+    source: ifrc2025-faint
+  - text:
+      ko: 쓰러진 뒤 바로 깨어나지 않으면 바로 {emergencyNumber}에 전화하세요.
+      en: ""
+    source: ifrc2025-faint
+  - text:
+      ko: 그 밖에 쓰러질 것 같은 느낌이나 짧은 실신은 보통 진료가 필요하지 않아요.
+      en: ""
+    source: ifrc2025-faint
+
+sources:
+  ifrc2025-faint:
+    title: IFRC International First Aid, Resuscitation and Education Guidelines 2025
+    section: Feeling faint
+    page: 401
+    url: https://www.ifrc.org/document/ifrc-international-first-aid-resuscitation-and-education-guidelines-2025

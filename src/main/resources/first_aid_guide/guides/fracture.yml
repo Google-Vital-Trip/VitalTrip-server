@@ -1,0 +1,99 @@
+# 원문 중 제외한 권고
+# - 삔 곳에 편하면 압박 붕대 (GPP): 선택 사항이라 단계 단순화를 위해 제외
+# - 외딴 곳에서 휘어진 골절 부위 펴기 (GPP, 교육받은 사람 전용): "하지 말 것"으로만 반영
+
+id: FRACTURE
+version: 1
+
+keyAction:
+  ko: 다친 부위를 움직이지 않게 해서 통증을 줄이세요.
+  en: ""
+
+steps:
+  - text:
+      ko: 부러졌는지 삐었는지는 엑스레이로만 정확히 알 수 있어요. 확실하지 않으면 부러진 것으로 생각하고 다루세요.
+      en: ""
+    source: ifrc2025-fracture
+  - text:
+      ko: 다친 부위가 움직이지 않게 하세요. 다친 사람이 손으로 직접 받치거나, 삼각건이나 붕대로 고정해 주세요.
+      en: ""
+    source: ifrc2025-fracture
+  - text:
+      ko: 편한 자세로 받쳐 주세요. 다친 팔다리를 높이 올려 두면 붓기를 줄이는 데 도움이 될 수 있어요.
+      en: ""
+    source: ifrc2025-fracture
+  - text:
+      ko: 다친 직후 최대한 빨리 얼음이나 차가운 것을 천에 싸서 최대 20분 동안 대 주세요. 너무 아파하면 멈추고, 피부 온도가 돌아온 뒤 다시 아프면 다시 대도 돼요.
+      en: ""
+    source: ifrc2025-fracture
+  - text:
+      ko: 다친 시각을 기록해 두세요. 의료진이 다친 쪽과 다치지 않은 쪽을 비교할 때 도움이 돼요.
+      en: ""
+    source: ifrc2025-fracture
+  - text:
+      ko: 쉬게 하면서 안심시키고 편하게 해 주세요.
+      en: ""
+    source: ifrc2025-fracture
+
+branches:
+  - condition:
+      ko: 뼈가 피부를 뚫고 나왔거나 상처에서 피가 난다면
+      en: ""
+    steps:
+      - text:
+          ko: 피를 멈추고 상처가 오염되지 않게 하는 게 먼저예요.
+          en: ""
+        source: ifrc2025-fracture
+      - text:
+          ko: 그다음 다른 골절처럼 다친 부위를 움직이지 않게 고정하고, 쇼크에 대비해 눕히고 따뜻하게 해 주세요.
+          en: ""
+        source: ifrc2025-fracture
+
+  - condition:
+      ko: 넓적다리(허벅지)를 다쳤다면
+      en: ""
+    steps:
+      - text:
+          ko: 넓적다리뼈가 부러지면 몸 안에서 피를 많이 흘려 생명이 위험할 수 있어요. 바로 {emergencyNumber}에 전화하고, 쇼크에 대비해 눕히고 따뜻하게 해 주세요.
+          en: ""
+        source: ifrc2025-fracture
+
+  - condition:
+      ko: 울퉁불퉁한 길로 먼 거리를 옮겨야 한다면
+      en: ""
+    steps:
+      - text:
+          ko: 옮기기 전에 부목을 대서 다친 부위를 고정하세요. 통증을 줄이고 더 다치지 않게 하면서 빠르고 안전하게 옮길 수 있게 하는 게 목적이에요.
+          en: ""
+        source: ifrc2025-fracture
+
+donts:
+  - text:
+      ko: 얼음을 피부에 바로 대지 마세요. 항상 천에 싸서 대고, 20분을 넘기지 마세요.
+      en: ""
+    source: ifrc2025-fracture
+  - text:
+      ko: 휘어진 팔다리를 억지로 펴려 하지 마세요.
+      en: ""
+    source: ifrc2025-fracture
+  - text:
+      ko: 삔 곳이 다 나을 때까지 체중을 싣는 운동은 피하세요.
+      en: ""
+    source: ifrc2025-fracture
+
+accessHelp:
+  - text:
+      ko: "다음 중 하나라도 해당하면 {emergencyNumber}에 전화하세요: 통증이나 붓기가 심할 때, 쇼크 신호가 보일 때, 넓적다리를 다쳤을 때, 팔다리 모양이 이상하게 꺾여 있을 때"
+      en: ""
+    source: ifrc2025-fracture
+  - text:
+      ko: 부러졌는지 삐었는지 확실하지 않으면 진료를 받으세요. 뼈가 빠지거나 부러진 경우는 항상 의료진의 치료가 필요해요.
+      en: ""
+    source: ifrc2025-fracture
+
+sources:
+  ifrc2025-fracture:
+    title: IFRC International First Aid, Resuscitation and Education Guidelines 2025
+    section: Fractures, sprains and strains
+    page: 301
+    url: https://www.ifrc.org/document/ifrc-international-first-aid-resuscitation-and-education-guidelines-2025

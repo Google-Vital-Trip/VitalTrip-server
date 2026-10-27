@@ -1,0 +1,74 @@
+# 원문 중 제외한 권고
+# - 혈당 측정이 포함된 평가 척도 MASS, LAPSS (약한 권고 *): 혈당 측정기 필요
+# - 산소를 주지 말 것 (강한 권고 **): 일반인이 산소를 가지고 있을 가능성이 낮아 제외
+
+id: STROKE
+version: 1
+
+keyAction:
+  ko: 뇌졸중의 초기 신호를 알아차리고 바로 {emergencyNumber}에 전화하세요.
+  en: ""
+
+steps:
+  - text:
+      ko: "갑자기 생긴 증상인지 확인하세요. 웃어 보게 했을 때 입꼬리 한쪽이 처지는지, 두 팔을 앞으로 뻗고 손바닥을 위로 하게 했을 때 한쪽 팔이 내려가는지, 간단한 문장을 따라 하게 했을 때 말이 어눌하거나 단어가 잘 안 나오는지 보세요."
+      en: ""
+    source: ifrc2025-stroke
+  - text:
+      ko: "다음도 뇌졸중 신호예요: 갑자기 한쪽이나 양쪽 눈이 잘 안 보일 때, 갑자기 걷기 힘들거나 어지럽고 균형을 잃을 때, 이유 없이 갑자기 심한 두통이 올 때, 뇌전증이 없는 사람이 경련을 일으킬 때."
+      en: ""
+    source: ifrc2025-stroke
+  - text:
+      ko: 하나라도 의심되면 바로 {emergencyNumber}에 전화하고, 증상이 시작된 시각을 기록해 두세요.
+      en: ""
+    source: ifrc2025-stroke
+  - text:
+      ko: 눕든 앉든 본인이 가장 편한 자세를 취하게 하세요. 넘어질 것 같으면 몸을 받쳐 주세요.
+      en: ""
+    source: ifrc2025-stroke
+  - text:
+      ko: 구급대가 올 때까지 숨을 쉬는지 지켜보고, 계속 말을 걸며 안심시키세요.
+      en: ""
+    source: ifrc2025-stroke
+
+branches:
+  - condition:
+      ko: 증상이 몇 분 안에 사라졌다면
+      en: ""
+    steps:
+      - text:
+          ko: 짧게 지나간 증상도 '미니 뇌졸중'일 수 있어요. 더 큰 뇌졸중을 막으려면 가능한 한 빨리 진료를 받으세요.
+          en: ""
+        source: ifrc2025-stroke
+
+  - condition:
+      ko: 의식을 잃었다면
+      en: ""
+    steps:
+      - text:
+          ko: 이마를 뒤로 젖히고 턱을 들어 숨길을 연 뒤, 숨을 쉬는지 확인하세요.
+          en: ""
+        source: ifrc2025-stroke
+
+donts:
+  - text:
+      ko: 괜찮아 보인다고 진료를 미루지 마세요. 뇌졸중 신호는 뇌가 손상됐다는 뜻이에요.
+      en: ""
+    source: ifrc2025-stroke
+
+accessHelp:
+  - text:
+      ko: 통화할 때 어떤 뇌졸중 신호가 보였는지 분명히 말하세요.
+      en: ""
+    source: ifrc2025-stroke
+  - text:
+      ko: 도움을 빨리 받을수록 뇌 손상이 줄어들어요. 증상이 가벼워 보여도 기다리지 마세요.
+      en: ""
+    source: ifrc2025-stroke
+
+sources:
+  ifrc2025-stroke:
+    title: IFRC International First Aid, Resuscitation and Education Guidelines 2025
+    section: Stroke
+    page: 366
+    url: https://www.ifrc.org/document/ifrc-international-first-aid-resuscitation-and-education-guidelines-2025

@@ -1,0 +1,138 @@
+# 원문 중 제외한 권고
+# - 뱀 물림 압박 고정법 (약한 권고 *, 교육받은 사람 전용): 외딴 곳 분기의 "신축성 없는 붕대로 고정"만 반영
+# - 즉석 들것으로 옮기기 (Snakebites, Local adaptation)
+# - 물린 부위 드레싱 교체, 심리 지원 (Mammal bites, Recovery): 응급 상황 이후의 관리
+
+id: ANIMAL_BITE
+version: 1
+
+keyAction:
+  ko: "개·고양이 등에게 물렸다면 최대한 빨리 깨끗한 물로 씻고, 뱀에게 물렸다면 최대한 움직이지 않게 하세요."
+  en: ""
+
+steps:
+  - text:
+      ko: 동물에게서 떨어져 안전한 곳으로 옮기세요.
+      en: ""
+    source: ifrc2025-snake
+
+branches:
+  - condition:
+      ko: 뱀에게 물렸다면
+      en: ""
+    steps:
+      - text:
+          ko: 편하게 눕히고 최대한 움직이지 않게 하세요. 다리를 물렸다면 걷지 않게 하고, 팔을 물렸다면 삼각건으로 고정해 주세요. 독이 퍼지는 걸 늦출 수 있어요.
+          en: ""
+        source: ifrc2025-snake
+      - text:
+          ko: "{emergencyNumber}에 전화하세요."
+          en: ""
+        source: ifrc2025-snake
+      - text:
+          ko: 부어오를 수 있으니 반지, 시계, 조이는 옷을 빼 주세요. 이때도 팔다리는 최대한 적게 움직이세요.
+          en: ""
+        source: ifrc2025-snake
+      - text:
+          ko: 물린 부위를 심장 높이와 같거나 더 낮게 두세요.
+          en: ""
+        source: ifrc2025-snake
+      - text:
+          ko: 상처 위치를 펜 등으로 표시해 변화를 볼 수 있게 하고, 물린 시각을 기록하세요.
+          en: ""
+        source: ifrc2025-snake
+      - text:
+          ko: 반응과 숨쉬기를 지켜보면서, 가만히 있도록 안심시켜 주세요.
+          en: ""
+        source: ifrc2025-snake
+      - text:
+          ko: 뱀을 잡거나 죽이려 하지 마세요. 안전하다면 사진을 찍거나 생김새를 기록해 두세요. 다만 뱀 종류를 알아내는 것보다 사람을 돌보는 게 먼저예요.
+          en: ""
+        source: ifrc2025-snake
+
+  - condition:
+      ko: 뱀에게 물렸고, 구급대가 오기까지 오래 걸리는 외딴 곳이라면
+      en: ""
+    steps:
+      - text:
+          ko: 깨끗한 물로 상처를 씻으세요.
+          en: ""
+        source: ifrc2025-snake
+      - text:
+          ko: 신축성 없는 붕대로 물린 팔다리를 고정하세요. 붕대가 없으면 바지나 셔츠 같은 옷을 이용하세요.
+          en: ""
+        source: ifrc2025-snake
+
+  - condition:
+      ko: 개, 고양이, 원숭이, 박쥐 등 포유동물이나 사람에게 물렸다면
+      en: ""
+    steps:
+      - text:
+          ko: 피가 많이 나면 먼저 상처를 눌러 피를 멈추세요.
+          en: ""
+        source: ifrc2025-mammal
+      - text:
+          ko: 최대한 빨리 깨끗한 물과 비누로 상처를 씻으세요. 세균과 광견병 감염 위험을 줄여 줘요. 수돗물이나 물병처럼 물줄기가 있는 걸로 씻으면 좋아요.
+          en: ""
+        source: ifrc2025-mammal
+      - text:
+          ko: 비누가 없으면 깨끗한 물이나 식염수만으로라도 씻으세요.
+          en: ""
+        source: ifrc2025-mammal
+      - text:
+          ko: 상처 주변을 말린 뒤 밴드나 드레싱으로 덮어 주세요.
+          en: ""
+        source: ifrc2025-cuts
+
+donts:
+  - text:
+      ko: 뱀에게 물린 곳에 지혈대를 감지 마세요.
+      en: ""
+    source: ifrc2025-snake
+  - text:
+      ko: 뱀독을 입으로 빨아내거나, 칼로 상처를 째거나, 문지르거나, 차가운 찜질을 하지 마세요. 효과가 없고 오히려 해가 될 수 있어요.
+      en: ""
+    source: ifrc2025-snake
+  - text:
+      ko: 숯이나 '흑석' 같은 근거 없는 민간요법을 쓰지 마세요.
+      en: ""
+    source: ifrc2025-snake
+
+accessHelp:
+  - text:
+      ko: 뱀에게 물렸다면 항상 {emergencyNumber}에 전화하세요. 의료진에게 어떤 뱀이었는지 꼭 알려 주세요.
+      en: ""
+    source: ifrc2025-snake
+  - text:
+      ko: 동물에게 물린 상처가 깊거나 벌어져서 꿰매야 할 것 같으면 가능한 한 빨리 진료를 받으세요.
+      en: ""
+    source: ifrc2025-mammal
+  - text:
+      ko: 야생동물에게 물렸고, 광견병이 흔한 지역이며, 광견병 예방접종을 받지 않았다면 진료를 받으세요.
+      en: ""
+    source: ifrc2025-mammal
+  - text:
+      ko: 파상풍 예방접종을 받지 않았다면 진료를 받으세요.
+      en: ""
+    source: ifrc2025-mammal
+  - text:
+      ko: 물린 곳 주변이 뜨거워지거나 아프면 감염 신호예요. 감염은 몇 시간에서 며칠 뒤에 생길 수 있으니 계속 살펴보고, 신호가 보이면 바로 진료를 받으세요.
+      en: ""
+    source: ifrc2025-mammal
+
+sources:
+  ifrc2025-mammal:
+    title: IFRC International First Aid, Resuscitation and Education Guidelines 2025
+    section: Mammal bites
+    page: 323
+    url: https://www.ifrc.org/document/ifrc-international-first-aid-resuscitation-and-education-guidelines-2025
+  ifrc2025-snake:
+    title: IFRC International First Aid, Resuscitation and Education Guidelines 2025
+    section: Snakebites
+    page: 340
+    url: https://www.ifrc.org/document/ifrc-international-first-aid-resuscitation-and-education-guidelines-2025
+  ifrc2025-cuts:
+    title: IFRC International First Aid, Resuscitation and Education Guidelines 2025
+    section: Cuts and grazes
+    page: 275
+    url: https://www.ifrc.org/document/ifrc-international-first-aid-resuscitation-and-education-guidelines-2025
