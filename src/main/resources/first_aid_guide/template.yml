@@ -1,0 +1,50 @@
+id:
+version: 1
+
+title:
+  ko: ""
+  en: ""
+
+keyAction:
+  ko: ""
+  en: ""
+
+steps:
+  - id: ""
+    text:
+      ko: ""
+      en: ""
+    source: ""
+
+branches:
+  - id: ""
+    condition:
+      ko: ""
+      en: ""
+    steps:
+      - id: ""
+        text:
+          ko: ""
+          en: ""
+        source: ""
+
+donts:
+  - id: ""
+    text:
+      ko: ""
+      en: ""
+    source: ""
+
+accessHelp:
+  - id: ""
+    text:
+      ko: ""
+      en: ""
+    source: ""
+
+sources:
+  source-key:
+    title: ""
+    section: ""
+    page:
+    url: ""

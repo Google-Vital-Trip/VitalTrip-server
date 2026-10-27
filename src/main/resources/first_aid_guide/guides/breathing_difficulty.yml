@@ -1,0 +1,142 @@
+id: BREATHING_DIFFICULTY
+version: 1
+
+title:
+  ko: 호흡곤란
+  en: Breathing difficulty
+
+keyAction:
+  ko: 편한 자세(보통 앉은 자세)를 취하게 하고 안심시키세요.
+  en: ""
+
+steps:
+  - id: check-smoke-gas
+    text:
+      ko: 주변에 연기나 가스 냄새가 있는지 확인하세요. 원인이 공기라면 당신도 위험할 수 있어요.
+      en: ""
+    source: ifrc2025-breathing
+  - id: lean-forward
+    text:
+      ko: 앉아서 몸을 앞으로 숙이고 팔을 탁자나 무릎에 기대게 하세요. 이 자세가 숨쉬기를 편하게 해줄 수 있어요.
+      en: ""
+    source: ifrc2025-breathing
+  - id: reassure-loosen
+    text:
+      ko: 차분한 목소리로 안심시키고, 조이는 옷(넥타이, 벨트, 단추)을 풀어 주세요.
+      en: ""
+    source: ifrc2025-breathing
+  - id: use-own-medicine
+    text:
+      ko: 평소 쓰는 약이 있다면 꺼내서 사용하도록 도와주세요.
+      en: ""
+    source: ifrc2025-breathing
+  - id: stay-and-monitor
+    text:
+      ko: 숨이 정상으로 돌아오거나 구급대가 올 때까지 곁에 있으면서 상태를 지켜보세요.
+      en: ""
+    source: ifrc2025-breathing
+
+branches:
+  - id: asthma
+    condition:
+      ko: 천식이 있거나 흡입기를 가지고 있다면
+      en: ""
+    steps:
+      - id: avoid-triggers
+        text:
+          ko: 연기나 먼지처럼 발작을 일으킬 만한 것에서 멀리 떨어지게 하세요.
+          en: ""
+        source: ifrc2025-asthma
+      - id: use-inhaler
+        text:
+          ko: 본인의 흡입기를 사용하도록 도와주세요.
+          en: ""
+        source: ifrc2025-asthma
+      - id: repeat-inhaler
+        text:
+          ko: 구급대를 기다리는 동안 처방받은 방법대로 흡입기를 추가로 사용하도록 도와주세요.
+          en: ""
+        source: ifrc2025-asthma
+      - id: fresh-air
+        text:
+          ko: 흡입기가 없다면 창문을 열어 둔 곳 근처처럼 맑은 공기가 있는 곳에서 차분히 쉬게 하세요.
+          en: ""
+        source: ifrc2025-asthma
+
+  - id: hyperventilation
+    condition:
+      ko: 불안하거나 놀란 뒤 숨을 빠르게 몰아쉬고, 어지럽거나 손발·입 주변이 저리다면 (과호흡)
+      en: ""
+    steps:
+      - id: quiet-place
+        text:
+          ko: 조용한 곳으로 옮기고 주변 사람들에게 자리를 비켜 달라고 하세요. 불안의 원인이 있다면 없애 주세요.
+          en: ""
+        source: ifrc2025-breathing
+      - id: guide-slow-breathing
+        text:
+          ko: 차분하고 예측 가능하게 행동하며, 천천히 일정하게 숨을 들이쉬고 내쉬도록 이끌어 주세요.
+          en: ""
+        source: ifrc2025-breathing
+
+  - id: unconscious
+    condition:
+      ko: 의식을 잃었다면
+      en: ""
+    steps:
+      - id: open-airway
+        text:
+          ko: 이마를 뒤로 젖히고 턱을 들어 숨길을 연 뒤, 숨을 쉬는지 확인하세요.
+          en: ""
+        source: ifrc2025-breathing
+
+donts:
+  - id: no-entering-smoke
+    text:
+      ko: 연기나 유독가스가 찬 곳에 보호 장비 없이 들어가지 마세요.
+      en: ""
+    source: ifrc2025-breathing
+
+accessHelp:
+  - id: help-danger-signs
+    text:
+      ko: "다음 중 하나라도 해당하면 바로 {emergencyNumber}에 전화하세요: 숨쉬기가 매우 힘들어 보일 때, 헷갈려하거나 졸려하거나 의식이 흐려질 때, 숨이 느려질 때, 입술·귀·손가락이 파래질 때"
+      en: ""
+    source: ifrc2025-breathing
+  - id: help-chest-pain
+    text:
+      ko: 가슴 통증이 함께 있으면 바로 {emergencyNumber}에 전화하세요.
+      en: ""
+    source: ifrc2025-breathing
+  - id: help-medicine-ineffective
+    text:
+      ko: 약이나 흡입기를 쓰고 몇 분이 지나도 나아지지 않거나, 흡입기가 없는데 발작이 몇 분 넘게 계속되면 {emergencyNumber}에 전화하세요.
+      en: ""
+    source: ifrc2025-asthma
+  - id: help-quiet-wheeze
+    text:
+      ko: 천식 발작 중에 쌕쌕거리는 소리가 줄어들면서 지쳐 보이면 나아진 게 아니라 더 위험한 신호예요. 바로 {emergencyNumber}에 전화하세요.
+      en: ""
+    source: ifrc2025-asthma
+  - id: help-hyperventilation
+    text:
+      ko: 과호흡이 진정되지 않거나, 불안 때문이 아닌 것 같으면 {emergencyNumber}에 전화하세요.
+      en: ""
+    source: ifrc2025-breathing
+  - id: help-after-15min
+    text:
+      ko: 10~15분이 지나도 숨쉬기가 나아지지 않으면 진료를 받으세요.
+      en: ""
+    source: ifrc2025-breathing
+
+sources:
+  ifrc2025-breathing:
+    title: IFRC International First Aid, Resuscitation and Education Guidelines 2025
+    section: Breathing difficulties
+    page: 232
+    url: https://www.ifrc.org/document/ifrc-international-first-aid-resuscitation-and-education-guidelines-2025
+  ifrc2025-asthma:
+    title: IFRC International First Aid, Resuscitation and Education Guidelines 2025
+    section: Asthma attack
+    page: 245
+    url: https://www.ifrc.org/document/ifrc-international-first-aid-resuscitation-and-education-guidelines-2025

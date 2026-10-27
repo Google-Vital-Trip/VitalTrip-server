@@ -1,0 +1,122 @@
+# 원문 중 제외한 권고
+# - 교육받은 처치자의 항히스타민제·스테로이드 제공 (약한 권고 *): 교육받은 사람 전용, 국가별 규정 차이
+# - 에피네프린 체중별 용량(0.15/0.3/0.5mg): 처방받은 자동주사기는 용량이 정해져 있어 불필요
+# - 습진 보습제, 꽃가루 알레르기 식염수 세척, 가려움 연고: 응급 상황이 아니어서 제외
+# - 사용한 자동주사기 폐기 규칙
+
+id: ALLERGIC_REACTION
+version: 1
+
+title:
+  ko: 알레르기 반응
+  en: Allergic reaction
+
+keyAction:
+  ko: 알레르기 원인에서 멀어지게 하고, 본인이 가진 약을 쓰도록 도와주세요.
+  en: ""
+
+steps:
+  - id: ask-history
+    text:
+      ko: 알고 있는 알레르기가 있는지, 처방받은 약을 가지고 있는지 물어보세요.
+      en: ""
+    source: ifrc2025-allergy
+  - id: remove-trigger
+    text:
+      ko: 피부에 묻은 원인 물질은 씻어 내고, 원인이 되는 환경(음식, 벌레, 화학물질 등)에서 멀리 떨어지게 하세요.
+      en: ""
+    source: ifrc2025-allergy
+  - id: watch-worsening
+    text:
+      ko: "가벼운 반응도 몇 분 만에 생명을 위협하는 반응으로 바뀔 수 있어요. 숨이 차거나 쌕쌕거림, 혀·목이 붓거나 목소리가 쉼, 삼키기 어려움, 창백해지거나 혼란스러워함이 나타나는지 계속 지켜보세요."
+      en: ""
+    source: ifrc2025-allergy
+
+branches:
+  - id: severe
+    condition:
+      ko: 숨쉬기 힘들거나, 혀·목이 붓거나, 삼키기 어렵거나, 창백해지며 쓰러질 것 같다면 (심한 알레르기 반응)
+      en: ""
+    steps:
+      - id: call-ems
+        text:
+          ko: 바로 {emergencyNumber}에 전화하세요.
+          en: ""
+        source: ifrc2025-allergy
+      - id: position
+        text:
+          ko: 숨쉬기 힘들어하면 앉히고, 그렇지 않으면 눕혀 주세요.
+          en: ""
+        source: ifrc2025-allergy
+      - id: use-epinephrine
+        text:
+          ko: 에피네프린 자동주사기(에피펜 등)를 가지고 있다면 바로 쓰도록 도와주세요. 허벅지 바깥쪽 가운데에 놓으며, 옷이 두껍지 않으면 옷 위로 놓아도 돼요.
+          en: ""
+        source: ifrc2025-allergy
+      - id: after-injection-effects
+        text:
+          ko: 주사 후 심장이 빨리 뛰거나, 떨리거나, 메스꺼움을 느낄 수 있어요. 주사의 부작용일 수 있지만 알레르기 반응 증상일 수도 있으니 계속 지켜보세요.
+          en: ""
+        source: ifrc2025-allergy
+      - id: second-injection
+        text:
+          ko: 주사 후 5~10분이 지나도 나아지지 않고 구급대가 아직 오지 않았다면, 두 번째 주사기가 있을 경우 추가로 사용하는 것을 고려하세요.
+          en: ""
+        source: ifrc2025-allergy
+      - id: monitor-until-ems
+        text:
+          ko: 구급대가 올 때까지 반응과 숨쉬기를 계속 확인하세요.
+          en: ""
+        source: ifrc2025-allergy
+
+  - id: mild
+    condition:
+      ko: 피부 가려움·두드러기, 재채기, 눈 가려움, 배앓이 정도의 가벼운 반응이라면
+      en: ""
+    steps:
+      - id: take-own-medicine
+        text:
+          ko: 편한 자세를 취하게 하고, 본인이 가진 알레르기 약이 있으면 먹도록 도와주세요.
+          en: ""
+        source: ifrc2025-allergy
+      - id: watch-closely
+        text:
+          ko: 심한 반응으로 바뀌지 않는지 가까이서 계속 지켜보세요.
+          en: ""
+        source: ifrc2025-allergy
+
+donts:
+  - id: no-rubbing
+    text:
+      ko: 가려운 피부를 문지르지 않게 하세요. 더 가려워질 수 있어요.
+      en: ""
+    source: ifrc2025-allergy
+  - id: no-skipping-care
+    text:
+      ko: 에피네프린 주사 후 좋아졌다고 진료를 건너뛰지 마세요. 심한 반응은 몇 시간에서 며칠 뒤 다시 나타날 수 있어 3일 동안 지켜봐야 해요.
+      en: ""
+    source: ifrc2025-allergy
+
+accessHelp:
+  - id: help-on-suspicion
+    text:
+      ko: 심한 알레르기 반응이 의심되는 순간 바로 {emergencyNumber}에 전화하세요. 생명을 위협하는 상태예요.
+      en: ""
+    source: ifrc2025-allergy
+  - id: help-tell-epinephrine
+    text:
+      ko: 에피네프린 주사를 맞았다면 구급대에 꼭 알리세요.
+      en: ""
+    source: ifrc2025-allergy
+  - id: help-persistent-hives
+    text:
+      ko: 두드러기가 매우 불편하고 며칠이 지나도 나아지지 않으면 진료를 받으세요.
+      en: ""
+    source: ifrc2025-allergy
+
+sources:
+  ifrc2025-allergy:
+    title: IFRC International First Aid, Resuscitation and Education Guidelines 2025
+    section: Allergic reaction and anaphylaxis
+    page: 376
+    url: https://www.ifrc.org/document/ifrc-international-first-aid-resuscitation-and-education-guidelines-2025

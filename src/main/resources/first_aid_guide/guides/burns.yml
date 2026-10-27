@@ -1,0 +1,186 @@
+# 원문 중 제외한 권고
+# - 식힌 뒤 바셀린·꿀 바르기 (약한 권고 *), 꿀·알로에·바나나 잎 드레싱 (GPP, Local adaptation): 구하기 쉬운 재료지만 응급 처치 이후의 관리
+# - 디포테린 등 화학물질 중화 세척액 (약한 권고 *): 여행자가 가지고 있을 가능성이 낮음
+# - 실버설파디아진 사용 금지 (약한 권고 *): 처방 연고라 여행자 해당 가능성 낮음
+# - 화상 심각도 평가 척도 (Wallace scale 등): 원문도 효과적인 방법에 대한 근거가 없다고 함
+
+id: BURNS
+version: 1
+
+title:
+  ko: 화상
+  en: Burns
+
+keyAction:
+  ko: 깨끗한 흐르는 물로 최소 10분, 가능하면 20분 동안 화상 부위를 식히세요.
+  en: ""
+
+steps:
+  - id: remove-hazard
+    text:
+      ko: 안전하다면 더 다치지 않게 위험의 원인부터 처리하세요. 예를 들어 끓는 기름 냄비는 뚜껑을 덮으세요.
+      en: ""
+    source: ifrc2025-burns
+  - id: cool-water
+    text:
+      ko: 깨끗한 흐르는 물로 최소 10분, 가능하면 20분 동안 식히세요. 물줄기를 상처에 바로 대기보다 위에서 흘러내리게 하면 덜 아파요.
+      en: ""
+    source: ifrc2025-burns
+  - id: cool-alternatives
+    text:
+      ko: 흐르는 물이 없으면 주스나 우유 같은 차가운 음료로도 식힐 수 있어요. 물이 부족하면 그릇을 받치고 부어서 받은 물을 다시 쓰세요.
+      en: ""
+    source: ifrc2025-burns
+  - id: remove-jewelry
+    text:
+      ko: 화상 부위와 그 근처의 옷과 장신구는 피부에 달라붙지 않았다면 바로 빼세요. 부어오르면 빼기가 훨씬 어려워져요.
+      en: ""
+    source: ifrc2025-burns
+  - id: cover-burn
+    text:
+      ko: 식힌 뒤에는 화상용 드레싱(하이드로겔 등 달라붙지 않는 것)으로 덮으세요. 없으면 깨끗한 젖은 천이나 랩으로 덮으세요. 팔다리는 부을 수 있으니 감싸서 조이지 말고 덮기만 하세요.
+      en: ""
+    source: ifrc2025-burns
+  - id: monitor
+    text:
+      ko: 안심시키면서 반응, 숨쉬기, 체온을 지켜보세요. 아이, 노인, 당뇨가 있는 사람은 특히 주의하세요.
+      en: ""
+    source: ifrc2025-burns
+
+branches:
+  - id: chemical-skin
+    condition:
+      ko: 화학물질이 피부에 닿았다면
+      en: ""
+    steps:
+      - id: rinse-skin
+        text:
+          ko: 화학물질에 직접 닿지 않게 조심하면서, 통증이 줄어들 때까지 흐르는 물로 헹구세요.
+          en: ""
+        source: ifrc2025-burns
+      - id: protect-unburned-skin
+        text:
+          ko: 헹군 물이 다치지 않은 피부에 닿지 않게 하세요.
+          en: ""
+        source: ifrc2025-burns
+
+  - id: chemical-eye
+    condition:
+      ko: 화학물질이 눈에 들어갔다면
+      en: ""
+    steps:
+      - id: rinse-eye
+        text:
+          ko: 바로 깨끗한 흐르는 물이나 식염수로 눈을 헹구세요. 한쪽 눈만 다쳤다면 헹군 물이 다른 쪽 눈에 들어가지 않게 하세요.
+          en: ""
+        source: ifrc2025-burns
+      - id: remove-contacts
+        text:
+          ko: 헹구는 동안 콘택트렌즈를 빼세요.
+          en: ""
+        source: ifrc2025-burns
+      - id: wait-for-advice
+        text:
+          ko: 의료진과 상의하기 전에는 다른 약이나 제품을 넣지 마세요. 다친 사람이 직접 운전하지 않게 하세요.
+          en: ""
+        source: ifrc2025-burns
+
+  - id: chemical-swallowed
+    condition:
+      ko: 화학물질을 삼켰다면
+      en: ""
+    steps:
+      - id: contact-poison-center
+        text:
+          ko: 물 등을 마시게 해서 희석하려 하지 말고, 중독센터나 {emergencyNumber}에 연락하세요.
+          en: ""
+        source: ifrc2025-burns
+
+  - id: extensive
+    condition:
+      ko: 화상 범위가 넓다면
+      en: ""
+    steps:
+      - id: prevent-shock
+        text:
+          ko: 쇼크가 올 수 있어요. 눕히고 따뜻하게 해 주되, 화상 부위가 바닥에 닿지 않게 깨끗하게 유지하세요.
+          en: ""
+        source: ifrc2025-burns
+
+  - id: finger
+    condition:
+      ko: 손가락을 데었다면
+      en: ""
+    steps:
+      - id: separate-fingers
+        text:
+          ko: 손가락끼리 달라붙지 않도록 사이사이에 깨끗한 젖은 천이나 멸균 거즈를 끼워 주세요.
+          en: ""
+        source: ifrc2025-burns
+
+  - id: sunburn
+    condition:
+      ko: 햇볕에 데었다면
+      en: ""
+    steps:
+      - id: apply-aftersun
+        text:
+          ko: 애프터선 로션이나 알로에 크림이 있으면 설명서대로 바르세요. 통증을 줄이는 데 도움이 될 수 있어요.
+          en: ""
+        source: ifrc2025-burns
+      - id: see-doctor-if-vulnerable
+        text:
+          ko: 넓게 탔거나, 아기·노인·당뇨가 있는 사람이라면 가능한 한 빨리 진료를 받으세요.
+          en: ""
+        source: ifrc2025-burns
+
+donts:
+  - id: no-ice
+    text:
+      ko: 얼음을 대지 마세요. 상처가 더 심해질 수 있어요.
+      en: ""
+    source: ifrc2025-burns
+  - id: no-ice-water
+    text:
+      ko: 얼음처럼 차가운 물로 식히지 마세요. 특히 아이나 넓은 화상은 체온이 너무 떨어질 수 있어요.
+      en: ""
+    source: ifrc2025-burns
+  - id: no-popping-blisters
+    text:
+      ko: 물집을 터뜨리거나 짜지 마세요. 감염 위험이 커져요.
+      en: ""
+    source: ifrc2025-burns
+  - id: no-peeling-clothing
+    text:
+      ko: 피부에 달라붙은 옷은 억지로 떼지 마세요.
+      en: ""
+    source: ifrc2025-burns
+
+accessHelp:
+  - id: help-serious-burns
+    text:
+      ko: "다음 중 하나라도 해당하면 {emergencyNumber}에 전화하거나 가까운 의료기관으로 가세요: 화상이 넓거나 깊을 때, 얼굴·입·목·생식기 근처일 때, 화학물질·전기·불꽃 때문에 생긴 화상일 때"
+      en: ""
+    source: ifrc2025-burns
+  - id: help-vulnerable-person
+    text:
+      ko: 아기나 노인 등 취약한 사람이 데었다면 작아 보여도 진료를 받으세요.
+      en: ""
+    source: ifrc2025-burns
+  - id: help-blisters
+    text:
+      ko: 물집이 생겼다면 터뜨리지 말고 진료를 받으세요.
+      en: ""
+    source: ifrc2025-burns
+  - id: help-infection-signs
+    text:
+      ko: 화상 주변이 뜨거워지거나 아프거나 열이 나면 감염 신호예요. 바로 진료를 받으세요.
+      en: ""
+    source: ifrc2025-burns
+
+sources:
+  ifrc2025-burns:
+    title: IFRC International First Aid, Resuscitation and Education Guidelines 2025
+    section: Burns
+    page: 288
+    url: https://www.ifrc.org/document/ifrc-international-first-aid-resuscitation-and-education-guidelines-2025
