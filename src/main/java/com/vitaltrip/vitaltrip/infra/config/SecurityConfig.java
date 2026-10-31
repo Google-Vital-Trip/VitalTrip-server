@@ -115,7 +115,8 @@ public class SecurityConfig {
                         // 퍼블릭 API
                         .requestMatchers(
                                 "/api/location/**",
-                                "/api/news/**"
+                                "/api/news/**",
+                                "/api/v2/first-aid/**"
                         ).permitAll()
 
                         // 관리자 엔드포인트
