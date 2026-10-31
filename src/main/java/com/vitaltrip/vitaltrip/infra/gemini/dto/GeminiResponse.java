@@ -8,6 +8,7 @@ import lombok.Data;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GeminiResponse {
 
+    private String modelVersion;
     private List<Candidate> candidates;
     private UsageMetadata usageMetadata;
 
@@ -51,6 +52,7 @@ public class GeminiResponse {
         private Integer promptTokenCount;
         private Integer candidatesTokenCount;
         private Integer totalTokenCount;
+        private Integer thoughtsTokenCount;
     }
 
     public String getGeneratedText() {

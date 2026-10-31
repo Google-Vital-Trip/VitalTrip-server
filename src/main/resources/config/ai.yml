@@ -2,6 +2,10 @@ ai:
   gemini:
     api-key: ${GEMINI_API_KEY}
     base-url: ${GEMINI_BASE_URL:https://generativelanguage.googleapis.com/v1beta/models}
-    model: ${GEMINI_MODEL:gemini-3.5-flash}
+    model: ${GEMINI_MODEL:gemini-3.5-flash-lite}
     connect-timeout: 3s
     read-timeout: 8s
+    router:
+      model: ${GEMINI_ROUTER_MODEL:gemini-3.5-flash-lite}
+      read-timeout: 5s
+      thinking-level: minimal

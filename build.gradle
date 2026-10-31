@@ -23,9 +23,13 @@ repositories {
     mavenCentral()
 }
 
+ext['testcontainers.version'] = '1.21.4'
+
 dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 
     //Swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'

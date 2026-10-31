@@ -79,7 +79,7 @@ branches:
           en: ""
         source: ifrc2025-heat
 
-  - id: shivering
+  - id: cold-after-cooling
     condition:
       ko: 식힌 뒤 춥다고 하거나 떨기 시작한다면
       en: ""
