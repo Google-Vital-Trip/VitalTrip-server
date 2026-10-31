@@ -13,6 +13,7 @@ spring:
       - classpath:config/places.yml
       - classpath:config/news.yml
       - classpath:config/resilience.yml
+      - classpath:config/guide.yml
 
 server:
   port: ${SERVER_PORT:8080}

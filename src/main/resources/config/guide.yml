@@ -1,0 +1,4 @@
+guide:
+  location: classpath:first_aid_guide/guides/*.yml
+  languages:
+    - ko
