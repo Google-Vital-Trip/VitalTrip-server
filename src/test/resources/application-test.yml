@@ -14,6 +14,11 @@ auth:
     secure: false
     same-site: Lax
 
+app:
+  cors:
+    allowed-origins:
+      - http://localhost:3000
+
 GOOGLE_CLIENT_ID: test-client-id
 GOOGLE_CLIENT_SECRET: test-client-secret
 GOOGLE_CALLBACK_URI: http://localhost:8080/login/oauth2/code/google
