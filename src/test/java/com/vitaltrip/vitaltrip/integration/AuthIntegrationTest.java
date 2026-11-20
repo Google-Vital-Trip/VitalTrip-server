@@ -9,8 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vitaltrip.vitaltrip.presentation.auth.dto.AuthDto;
-import com.vitaltrip.vitaltrip.domain.user.User;
+import com.vitaltrip.vitaltrip.domain.auth.dto.AuthDto;
+import com.vitaltrip.vitaltrip.domain.user.entity.User;
 import com.vitaltrip.vitaltrip.domain.user.repository.UserRepository;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
