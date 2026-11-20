@@ -4,7 +4,7 @@ import com.vitaltrip.vitaltrip.global.security.filter.FirstAidAuthenticationFilt
 import com.vitaltrip.vitaltrip.global.security.filter.JwtAuthenticationFilter;
 import com.vitaltrip.vitaltrip.domain.auth.handler.SimpleOAuth2SuccessHandler;
 
-import java.util.Arrays;
+import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
@@ -33,6 +33,7 @@ public class SecurityConfig {
     private final FirstAidAuthenticationFilter firstAidAuthenticationFilter;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final SimpleOAuth2SuccessHandler oAuth2SuccessHandler;
+    private final CorsProperties corsProperties;
 
     @Bean
     @Order(0)
@@ -144,28 +145,17 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        configuration.setAllowedOrigins(corsProperties.allowedOrigins());
 
-        configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:8080",
-                "http://localhost:3000", // 프론트엔드 개발 서버
-                "http://dkswoalstest.duckdns.org",
-                "https://dkswoalstest.duckdns.org",
-                "https://admin.aivitaltrip.com"
-        ));
-
-        configuration.setAllowedMethods(Arrays.asList(
+        configuration.setAllowedMethods(List.of(
                 "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"
         ));
 
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowedHeaders(List.of(
+                "Authorization", "Content-Type", "Accept", "Accept-Language", "X-Requested-With"
+        ));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
-
-        configuration.setExposedHeaders(Arrays.asList(
-                "Authorization", "Content-Type", "X-Requested-With", "accept", "Origin",
-                "Access-Control-Request-Method", "Access-Control-Request-Headers"
-        ));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
